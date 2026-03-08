@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Discipleship Tracker - Secure</title>
+  <title>Discipleship Tracker - Smart</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -74,15 +74,114 @@
     .toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; padding: 20px; background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .search-input, select { padding: 10px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; min-width: 200px; transition: all 0.3s ease; }
     .search-input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
-    .table-container { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow-x: auto; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; min-width: 2000px; }
-    thead { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    th { padding: 16px 12px; text-align: center; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.5px; }
-    th:first-child { text-align: left; min-width: 320px; position: sticky; left: 0; z-index: 10; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    td { padding: 14px 12px; border: 1px solid #e2e8f0; text-align: center; font-size: 14px; }
-    td:first-child { text-align: left; position: sticky; left: 0; background: white; z-index: 5; border-right: 2px solid #667eea; }
-    tbody tr { transition: all 0.3s ease; }
-    tbody tr:hover { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); transform: scale(1.01); }
+    
+/* ===== FIXED HEADER TABLE STYLES - CORRECTED ===== */
+.table-wrapper {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  margin-bottom: 24px;
+  overflow-x: auto; /* Allow horizontal scroll */
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-header-fixed {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.table-body-scrollable {
+  overflow: auto; /* Allow both vertical and horizontal scroll */
+  flex: 1;
+  max-height: calc(70vh - 60px);
+}
+
+.table-body-scrollable::-webkit-scrollbar {
+  width: 8px;
+  height: 8px; /* Horizontal scrollbar */
+}
+
+.table-body-scrollable::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-body-scrollable::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+}
+
+.table-body-scrollable::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 2000px; /* Ensure table is wide enough for horizontal scroll */
+}
+
+thead {
+  background: transparent;
+  color: white;
+}
+
+th {
+  padding: 16px 12px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 10;
+}
+
+th:first-child {
+  text-align: left;
+  min-width: 320px;
+  position: sticky;
+  left: 0;
+  z-index: 11;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 14px;
+  background: white;
+}
+
+td:first-child {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 5;
+  border-right: 2px solid #667eea;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+    
     .student-info { display: flex; flex-direction: column; gap: 6px; }
     .student-name { font-weight: 700; color: #2d3748; font-size: 15px; }
     .student-phone { font-size: 13px; color: #718096; }
@@ -118,13 +217,14 @@
     .close-modal { position: absolute !important; top: 16px !important; right: 20px !important; font-size: 28px !important; cursor: pointer !important; color: #64748b !important; }
     .close-modal:hover { color: #ef476f !important; }
     .footer { text-align: center; padding: 24px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); color: #a0aec0; margin-top: auto; border-radius: 20px 20px 0 0; }
+    .auto-class-hint { font-size: 12px; color: #64748b; margin-top: 4px; font-style: italic; }
     @media (max-width: 768px) { .header { flex-direction: column; align-items: flex-start; } .nav { width: 100%; } .stats-grid { grid-template-columns: 1fr 1fr; } .toolbar { flex-direction: column; align-items: stretch; } .toolbar > * { width: 100%; } .form-row { grid-template-columns: 1fr; } .lessons-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <div class="app-container">
     <header class="header">
-      <h1> Discipleship Tracker</h1>
+      <h1>🙏 Discipleship Tracker</h1>
       <nav class="nav">
         <button class="nav-btn active" id="btn-dashboard" onclick="showView('dashboard')" disabled>📊 Dashboard</button>
         <button class="nav-btn" id="btn-data-entry" onclick="showView('data-entry')" disabled>📝 Data Entry</button>
@@ -152,7 +252,8 @@
           <div class="stat-card"><h3>Active Groups</h3><p id="active-groups">0</p></div>
         </div>
         <div class="student-search-container">
-          <label>🔍 Search Student to View Progress</label>
+          <label>🔍 Search Student (Type name, class, or phone)</label>
+          <input type="text" id="dashboard-search-input" class="search-input" placeholder="Start typing to search..." oninput="searchStudentsDashboard()" style="width:100%;max-width:500px;margin-bottom:12px;"/>
           <select class="student-selector" id="dashboard-student-selector" onchange="showIndividualProgress()">
             <option value="">-- Select a Student --</option>
           </select>
@@ -171,8 +272,7 @@
           <div class="chart-wrapper"><h4>📊 Progress Distribution</h4><canvas id="progress-distribution-chart"></canvas></div>
         </div>
       </section>
-
-      <section id="data-entry" class="view">
+            <section id="data-entry" class="view">
         <div id="success-message" class="success-message">✅ Data saved successfully!</div>
         <div class="form-container">
           <form id="data-entry-form" onsubmit="handleFormSubmit(event)">
@@ -182,7 +282,11 @@
               <div class="form-row">
                 <div class="form-group"><label>Full Name *</label><input type="text" id="de-name" required placeholder="Enter student name"/></div>
                 <div class="form-group"><label>Phone Number *</label><input type="tel" id="de-phone" required placeholder="e.g., 0712345678"/></div>
-                <div class="form-group"><label>Class Number *</label><input type="text" id="de-class" required placeholder="e.g., Class A"/></div>
+                <div class="form-group">
+                  <label>Class Number *</label>
+                  <input type="text" id="de-class" required placeholder="Auto-suggested or type custom"/>
+                  <div class="auto-class-hint" id="class-hint">Next available: <strong>Auto-calculating...</strong></div>
+                </div>
               </div>
               <div class="form-row">
                 <div class="form-group"><label>Email</label><input type="email" id="de-email" placeholder="student@email.com"/></div>
@@ -202,22 +306,27 @@
           </form>
         </div>
       </section>
-            <section id="reports" class="view">
-        <div class="toolbar">
-          <input type="text" id="search-report" placeholder="🔍 Search students..." class="search-input" oninput="renderReportsTable()"/>
-          <select id="filter-class" onchange="renderReportsTable()"><option value="">All Classes</option></select>
-          <button class="btn-primary" onclick="showView('data-entry')">➕ Add Student</button>
-          <button class="btn-success" onclick="exportToCSV()">📥 CSV</button>
-          <button class="btn-secondary" onclick="exportToPDF()">📄 PDF</button>
-        </div>
-        <div class="table-container">
-          <table id="reports-table">
-            <thead><tr id="table-header"></tr></thead>
-            <tbody id="table-body"></tbody>
-          </table>
-        </div>
-        <div class="pagination" id="pagination"></div>
-      </section>
+
+      <section id="reports" class="view">
+  <div class="toolbar">
+    <input type="text" id="search-report" placeholder="🔍 Search by name, class, or phone..." class="search-input" oninput="renderReportsTable()" style="flex:1;min-width:250px;"/>
+    <select id="filter-class" onchange="renderReportsTable()"><option value="">All Classes</option></select>
+    <button class="btn-primary" onclick="showView('data-entry')">➕ Add Student</button>
+    <button class="btn-success" onclick="exportToCSV()">📥 CSV</button>
+    <button class="btn-secondary" onclick="exportToPDF()">📄 PDF</button>
+  </div>
+  
+  <div class="table-wrapper">
+    <table id="reports-table">
+      <thead class="table-header-fixed">
+        <tr id="table-header"></tr>
+      </thead>
+      <tbody class="table-body-scrollable" id="table-body"></tbody>
+    </table>
+  </div>
+  
+  <div class="pagination" id="pagination"></div>
+</section>
 
       <section id="users" class="view">
         <div class="toolbar"><h3>👥 User Management</h3></div>
@@ -241,7 +350,7 @@
       </section>
     </main>
 
-    <footer class="footer"><p>© 2026 Discipleship Tracker - Secure Edition 🔐</p></footer>
+    <footer class="footer"><p>© 2026 Discipleship Tracker - Smart Edition 🔐</p></footer>
   </div>
 
   <div id="register-modal" class="modal">
@@ -284,15 +393,12 @@
       recordsPerPage: 20,
       filteredStudents: [],
       currentUser: null,
-      isAdmin: false
+      isAdmin: false,
+      nextClassNumber: ''
     };
 
-    // ===== SECURITY: Admin Access Check =====
     function checkAdminAccess() {
-      if (!app.isAdmin) {
-        alert('🔐 Admin access required!');
-        return false;
-      }
+      if (!app.isAdmin) { alert('🔐 Admin access required!'); return false; }
       return true;
     }
 
@@ -327,6 +433,7 @@
           
           console.log('✅ Admin:', app.isAdmin);
           document.getElementById('btn-users').disabled = !app.isAdmin;
+          calculateNextClassNumber();
           loadUserData();
         }).catch(err => {
           console.error('❌ Error:', err);
@@ -349,6 +456,7 @@
       console.log('📊 Loading data...');
       database.ref('students').on('value', snapshot => {
         app.students = snapshot.val() || {};
+        calculateNextClassNumber();
         renderReportsTable();
         updateDashboard();
         updateStudentSelector();
@@ -362,11 +470,27 @@
       if (app.isAdmin) loadUserManagement();
     }
 
-    // ===== SECURE View Switching =====
+    function calculateNextClassNumber() {
+      const classes = Object.values(app.students).map(s => parseInt(s.class)).filter(c => !isNaN(c));
+      if (classes.length === 0) {
+        app.nextClassNumber = '696';
+      } else {
+        const maxClass = Math.max(...classes);
+        app.nextClassNumber = (maxClass + 1).toString();
+      }
+      const hintEl = document.getElementById('class-hint');
+      if (hintEl) {
+        hintEl.innerHTML = `Next available: <strong>${app.nextClassNumber}</strong> (or type custom)`;
+      }
+      const classInput = document.getElementById('de-class');
+      if (classInput && !classInput.value) {
+        classInput.value = app.nextClassNumber;
+      }
+    }
+
     window.showView = function(viewName) {
       console.log('📍 View:', viewName, '| Admin:', app.isAdmin);
       
-      // Block non-admins from accessing Users view
       if (viewName === 'users' && !app.isAdmin) {
         alert('🔐 Admin access required!');
         return;
@@ -386,6 +510,9 @@
           console.log('👥 Loading users...'); 
           loadUserManagement(); 
         }
+      }
+      if (viewName === 'data-entry') {
+        calculateNextClassNumber();
       }
     };
 
@@ -441,7 +568,6 @@
       });
     }
 
-    // ===== SECURE User Management Functions =====
     window.approveUser = function(uid, email) {
       if (!checkAdminAccess()) return;
       if (!confirm('Approve ' + email + '?')) return;
@@ -461,52 +587,30 @@
       database.ref('pending_users/' + uid).remove().then(() => alert('❌ Rejected'));
     };
 
-    // ===== SECURE removeUser - CANNOT remove yourself or other admins without confirmation =====
     window.removeUser = function(uid, email) {
       if (!checkAdminAccess()) return;
-      
-      // Prevent admin from removing themselves
-      if (uid === app.currentUser.uid) {
-        alert('⚠️ You cannot remove yourself!');
-        return;
-      }
-      
-      // Check if trying to remove another admin
+      if (uid === app.currentUser.uid) { alert('⚠️ You cannot remove yourself!'); return; }
       database.ref('authorized_users/' + uid).once('value').then(snapshot => {
         const userData = snapshot.val();
         if (userData && userData.role === 'Admin') {
-          if (!confirm('⚠️ You are about to remove another ADMIN. Continue?')) {
-            return;
-          }
+          if (!confirm('⚠️ You are about to remove another ADMIN. Continue?')) return;
         }
-        
         if (!confirm('Remove ' + email + '?')) return;
         database.ref('authorized_users/' + uid).remove().then(() => alert('✅ Removed'));
       });
     };
 
-    // ===== SECURE addNewUser =====
     window.addNewUser = function(e) {
       e.preventDefault();
       if (!checkAdminAccess()) return;
-      
       const email = document.getElementById('new-user-email').value.trim();
       const password = document.getElementById('new-user-password').value;
       const name = document.getElementById('new-user-name').value.trim();
-      
       auth.createUserWithEmailAndPassword(email, password)
-        .then(uc => database.ref('authorized_users/' + uc.user.uid).set({ 
-          email, 
-          name, 
-          role: 'User', 
-          createdAt: firebase.database.ServerValue.TIMESTAMP, 
-          status: 'approved', 
-          createdBy: app.currentUser.uid 
-        }))
+        .then(uc => database.ref('authorized_users/' + uc.user.uid).set({ email, name, role: 'User', createdAt: firebase.database.ServerValue.TIMESTAMP, status: 'approved', createdBy: app.currentUser.uid }))
         .then(() => { alert('✅ User created!'); e.target.reset(); })
         .catch(err => alert('❌ ' + err.message));
     };
-    
         function populateLessonsGrid() {
       const grid = document.getElementById('lessons-grid');
       if (!grid) return;
@@ -538,6 +642,7 @@
         document.getElementById('success-message').classList.add('show');
         setTimeout(() => document.getElementById('success-message').classList.remove('show'), 3000);
         resetForm();
+        calculateNextClassNumber();
       }).catch(err => alert('Error: ' + err.message));
     };
 
@@ -547,6 +652,7 @@
       document.getElementById('form-contact-buttons').innerHTML = '';
       document.querySelectorAll('.toggle-switch').forEach(t => t.classList.remove('active'));
       app.lessonStates = {};
+      calculateNextClassNumber();
     };
 
     function addContactButtonsToForm(phone) {
@@ -557,11 +663,37 @@
       contactDiv.innerHTML = `<div style="margin:16px 0;padding:16px;background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:12px;border:2px solid #e2e8f0;"><strong style="color:#4a5568;display:block;margin-bottom:12px;font-size:14px;"><i class="fas fa-mobile-alt"></i> Quick Contact:</strong><div class="contact-buttons"><a href="tel:${phone}" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a><a href="sms:${phone}" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/${whatsappPhone}" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div>`;
     }
 
+    window.searchStudentsDashboard = function() {
+      const searchTerm = document.getElementById('dashboard-search-input').value.toLowerCase();
+      const selector = document.getElementById('dashboard-student-selector');
+      
+      if (!selector) return;
+      
+      const filtered = Object.entries(app.students).filter(([id, s]) => {
+        return !searchTerm || 
+               s.name.toLowerCase().includes(searchTerm) || 
+               s.class.toLowerCase().includes(searchTerm) || 
+               s.phone.includes(searchTerm);
+      });
+      
+      selector.innerHTML = '<option value="">-- Select a Student --</option>' + 
+        filtered.map(([id, s]) => `<option value="${id}">${s.name} (Class ${s.class}) - ${s.phone}</option>`).join('');
+      
+      if (filtered.length > 0) {
+        selector.value = filtered[0][0];
+        showIndividualProgress();
+      } else {
+        document.getElementById('individual-progress').classList.remove('show');
+        document.getElementById('current-student-badge').style.display = 'none';
+      }
+    };
+
     function updateStudentSelector() {
       const selector = document.getElementById('dashboard-student-selector');
       if (!selector) return;
       const sorted = Object.entries(app.students).sort((a, b) => (b[1].updatedAt || 0) - (a[1].updatedAt || 0));
-      selector.innerHTML = '<option value="">-- Select --</option>' + sorted.map(([id, s]) => `<option value="${id}">${s.name} (${s.class})</option>`).join('');
+      selector.innerHTML = '<option value="">-- Select a Student --</option>' + 
+        sorted.map(([id, s]) => `<option value="${id}">${s.name} (Class ${s.class}) - ${s.phone}</option>`).join('');
       if (sorted.length > 0) { selector.value = sorted[0][0]; showIndividualProgress(); }
     }
 
@@ -626,10 +758,17 @@
       
       app.filteredStudents = Object.keys(app.students).filter(id => {
         const s = app.students[id];
-        return (!searchTerm || s.name.toLowerCase().includes(searchTerm) || s.phone.includes(searchTerm)) && (!classFilter || s.class === classFilter);
+        const matchesSearch = !searchTerm || 
+          s.name.toLowerCase().includes(searchTerm) || 
+          s.class.toLowerCase().includes(searchTerm) || 
+          s.phone.includes(searchTerm);
+        const matchesClass = !classFilter || s.class === classFilter;
+        return matchesSearch && matchesClass;
       });
       
-      header.innerHTML = '<th style="text-align:left;min-width:320px;">Student</th>' + app.lessons.map(l => `<th style="font-size:11px;writing-mode:vertical-lr;transform:rotate(180deg);height:100px;">${l}</th>`).join('') + '<th>Progress</th><th>Actions</th>';
+      header.innerHTML = '<th style="text-align:left;min-width:320px;">Student</th>' + 
+        app.lessons.map(l => `<th style="font-size:11px;writing-mode:vertical-lr;transform:rotate(180deg);height:100px;">${l}</th>`).join('') + 
+        '<th>Progress</th><th>Actions</th>';
       
       const totalPages = Math.ceil(app.filteredStudents.length / app.recordsPerPage);
       const pageStudents = app.filteredStudents.slice((app.currentPage - 1) * app.recordsPerPage, app.currentPage * app.recordsPerPage);
@@ -642,20 +781,36 @@
         const cleanPhone = s.phone.replace(/[\s\-\(\)]/g, '');
         const waPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.substring(1) : cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
         
-        return `<tr onclick="if(!event.target.classList.contains('btn-danger')&&!event.target.closest('.btn-contact'))loadStudentForEdit('${id}')"><td><div class="student-info"><span class="student-name">${s.name}</span><span class="student-phone"><i class="fas fa-phone"></i> ${s.phone}</span><span class="student-class"><i class="fas fa-graduation-cap"></i> ${s.class}</span><div class="contact-buttons"><a href="tel:${s.phone}" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a><a href="sms:${s.phone}" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/${waPhone}" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div></td>` +
+        return `<tr onclick="if(!event.target.classList.contains('btn-danger')&&!event.target.closest('.btn-contact'))loadStudentForEdit('${id}')">
+          <td><div class="student-info">
+            <span class="student-name">${s.name}</span>
+            <span class="student-phone"><i class="fas fa-phone"></i> ${s.phone}</span>
+            <span class="student-class"><i class="fas fa-graduation-cap"></i> Class ${s.class}</span>
+            <div class="contact-buttons">
+              <a href="tel:${s.phone}" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a>
+              <a href="sms:${s.phone}" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a>
+              <a href="https://wa.me/${waPhone}" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            </div>
+          </div></td>` +
           app.lessons.map(l => `<td><span class="status-badge ${(p[l]&&p[l].completed)?'status-yes':'status-no'}">${(p[l]&&p[l].completed)?'Yes':'No'}</span></td>`).join('') +
           `<td><small style="font-weight:700;color:#667eea;">${percent}% (${completedCount}/${app.lessons.length})</small></td>` +
           `<td><button class="btn-danger btn-sm" onclick="deleteStudent('${id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
       }).join('');
       
-      if (app.filteredStudents.length === 0) body.innerHTML = '<tr><td colspan="' + (app.lessons.length + 2) + '" style="padding:40px;text-align:center;color:#718096;">No students found</td></tr>';
+      if (app.filteredStudents.length === 0) 
+        body.innerHTML = '<tr><td colspan="' + (app.lessons.length + 2) + '" style="padding:40px;text-align:center;color:#718096;">No students found</td></tr>';
       renderPagination(totalPages);
     };
 
     function renderPagination(totalPages) {
       const p = document.getElementById('pagination');
       if (!p) return;
-      p.innerHTML = totalPages <= 1 ? '' : `<button onclick="changePage(1)" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-double-left"></i></button><button onclick="changePage(${app.currentPage-1})" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-left"></i></button><span class="pagination-info">${app.currentPage}/${totalPages}</span><button onclick="changePage(${app.currentPage+1})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-right"></i></button><button onclick="changePage(${totalPages})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-double-right"></i></button>`;
+      p.innerHTML = totalPages <= 1 ? '' : 
+        `<button onclick="changePage(1)" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-double-left"></i></button>` +
+        `<button onclick="changePage(${app.currentPage-1})" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-left"></i></button>` +
+        `<span class="pagination-info">${app.currentPage}/${totalPages}</span>` +
+        `<button onclick="changePage(${app.currentPage+1})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-right"></i></button>` +
+        `<button onclick="changePage(${totalPages})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-double-right"></i></button>`;
     }
 
     window.changePage = function(page) { app.currentPage = page; renderReportsTable(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -680,14 +835,17 @@
 
     window.deleteStudent = function(id) {
       if (!confirm('Delete?')) return;
-      database.ref('students/' + id).remove().then(() => database.ref('progress/' + id).remove()).then(() => alert('✅ Deleted'));
+      database.ref('students/' + id).remove().then(() => database.ref('progress/' + id).remove()).then(() => {
+        alert('✅ Deleted');
+        calculateNextClassNumber();
+      });
     };
 
     function updateClassFilter() {
       const f = document.getElementById('filter-class');
       if (!f) return;
-      const classes = [...new Set(Object.values(app.students).map(s => s.class).filter(c => c))];
-      f.innerHTML = '<option value="">All Classes</option>' + classes.map(c => `<option value="${c}">${c}</option>`).join('');
+      const classes = [...new Set(Object.values(app.students).map(s => s.class).filter(c => c))].sort((a, b) => parseInt(a) - parseInt(b));
+      f.innerHTML = '<option value="">All Classes</option>' + classes.map(c => `<option value="${c}">Class ${c}</option>`).join('');
     }
 
     function updateDashboard() {
@@ -728,12 +886,13 @@
     }
 
     window.exportToCSV = function() {
-      let csv = 'Name,Phone,Class,Email,' + app.lessons.join(',') + ',Progress\n';
+      let csv = 'Class,Name,Phone,Email,' + app.lessons.join(',') + ',Progress\n';
       Object.keys(app.students).forEach(id => {
         const s = app.students[id], p = app.progress[id] || {};
-        let row = `"${s.name}","${s.phone}","${s.class}","${s.email||''}"`;
+        let row = `"${s.class}","${s.name}","${s.phone}","${s.email||''}"`;
         app.lessons.forEach(l => { row += ',' + ((p[l]&&p[l].completed)?'Yes':'No'); });
-        csv += row + '\n';
+        const c = app.lessons.filter(l => p[l] && p[l].completed).length;
+        csv += row + ',' + Math.round((c/app.lessons.length)*100) + '%\n';
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
@@ -742,26 +901,82 @@
       a.click();
       alert('✅ CSV exported');
     };
-
-    window.exportToPDF = function() {
+    
+        window.exportToPDF = function() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('l', 'mm', 'a4');
-      doc.text('Discipleship Report', 14, 15);
-      const headers = [['Student','Phone','Class'].concat(app.lessons).concat(['Progress'])];
-      const data = Object.keys(app.students).map(id => {
+      
+      doc.setFontSize(18);
+      doc.setTextColor(102, 126, 234);
+      doc.text('Student Discipleship Progress Report', 14, 15);
+      doc.setFontSize(11);
+      doc.setTextColor(100, 100, 100);
+      doc.text('Generated: ' + new Date().toLocaleString(), 14, 22);
+      doc.text('Total Students: ' + Object.keys(app.students).length, 140, 22);
+      
+      const headers = [['Class', 'Name', 'Phone'].concat(app.lessons).concat(['Progress'])];
+      const data = Object.keys(app.students).sort((a, b) => {
+        const classA = parseInt(app.students[a].class) || 0;
+        const classB = parseInt(app.students[b].class) || 0;
+        return classA - classB;
+      }).map(id => {
         const s = app.students[id], p = app.progress[id] || {};
         const c = app.lessons.filter(l => p[l] && p[l].completed).length;
-        return [s.name, s.phone, s.class].concat(app.lessons.map(l => (p[l]&&p[l].completed)?'Yes':'No')).concat([Math.round((c/app.lessons.length)*100)+'%']);
+        const percent = Math.round((c / app.lessons.length) * 100);
+        return [
+          s.class,
+          s.name,
+          s.phone
+        ].concat(
+          app.lessons.map(l => (p[l] && p[l].completed) ? 'Yes' : 'No')
+        ).concat([percent + '%']);
       });
-      doc.autoTable({ head: headers, body: data, startY: 20 });
-      doc.save('report_' + new Date().toISOString().split('T')[0] + '.pdf');
-      alert('✅ PDF exported');
+      
+      doc.autoTable({
+        head: headers,
+        body: data,
+        startY: 28,
+        theme: 'grid',
+        styles: { 
+          fontSize: 7, 
+          cellPadding: 1.5,
+          font: 'helvetica',
+          cellWidth: 'auto',
+          overflow: 'linebreak'
+        },
+        headStyles: { 
+          fillColor: [102, 126, 234], 
+          textColor: 255,
+          fontStyle: 'bold',
+          fontSize: 8
+        },
+        alternateRowStyles: {
+          fillColor: [245, 247, 250]
+        },
+        columnStyles: {
+          0: { cellWidth: 12, fontStyle: 'bold' },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 22 },
+        },
+        margin: { top: 28, left: 14, right: 14 }
+      });
+      
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Page ' + i + ' of ' + pageCount, doc.internal.pageSize.getWidth() - 20, doc.internal.pageSize.getHeight() - 10);
+      }
+      
+      doc.save('Discipleship_Progress_Report_' + new Date().toISOString().split('T')[0] + '.pdf');
+      alert('✅ PDF exported successfully!');
     };
 
     window.addEventListener('DOMContentLoaded', function() {
       populateLessonsGrid();
       document.getElementById('de-joined').value = new Date().toISOString().split('T')[0];
-      console.log('✅ App Ready - Secure Admin Protection Enabled! 🔐');
+      console.log('✅ App Ready - Fixed Headers Enabled! 🔐');
     });
   </script>
 </body>
