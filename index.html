@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discipleship Tracker - Secure</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+    .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .header h1 { font-size: 26px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .nav { display: flex; gap: 10px; flex-wrap: wrap; }
+    .nav-btn { background: rgba(255,255,255,0.25); border: 2px solid white; color: white; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+    .nav-btn:hover, .nav-btn.active { background: white; color: #f5576c; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .user-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .content { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .view { display: none !important; }
+    .view.active { display: block !important; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .auth-warning { background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 32px; }
+    .stat-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: center; border-top: 5px solid; transition: transform 0.3s ease; }
+    .stat-card:hover { transform: translateY(-5px); }
+    .stat-card:nth-child(1) { border-top-color: #f093fb; }
+    .stat-card:nth-child(2) { border-top-color: #4facfe; }
+    .stat-card:nth-child(3) { border-top-color: #43e97b; }
+    .stat-card:nth-child(4) { border-top-color: #fa709a; }
+    .stat-card h3 { color: #4a5568; font-size: 14px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    .stat-card p { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .student-search-container { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 24px; border-radius: 16px; margin-bottom: 24px; border: 2px solid #e2e8f0; }
+    .student-search-container label { display: block; font-weight: 700; color: #4a5568; margin-bottom: 12px; font-size: 15px; }
+    .student-selector { width: 100%; max-width: 500px; padding: 14px 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; background: white; cursor: pointer; transition: all 0.3s ease; }
+    .student-selector:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15); }
+    .current-student-badge { display: inline-block; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-left: 10px; }
+    .individual-progress { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 32px; display: none; }
+    .individual-progress.show { display: block; animation: fadeIn 0.4s ease; }
+    .individual-progress h3 { color: #4a5568; font-size: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px; }
+    .chart-wrapper { background: white; padding: 24px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    .chart-wrapper h4 { color: #4a5568; font-size: 16px; margin-bottom: 20px; font-weight: 700; }
+    .form-container { background: white; padding: 32px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 32px; }
+    .form-section { margin-bottom: 32px; padding: 24px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; border: 2px solid #e2e8f0; }
+    .form-section h4 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 18px; margin-bottom: 20px; font-weight: 700; }
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; }
+    .form-group input { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; transition: all 0.3s ease; }
+    .form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+    .lessons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .lesson-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; transition: all 0.3s ease; }
+    .lesson-item:hover { border-color: #667eea; transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .lesson-item label { font-weight: 600; color: #4a5568; cursor: pointer; flex: 1; }
+    .toggle-switch { width: 52px; height: 28px; background: linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 100%); border-radius: 14px; position: relative; cursor: pointer; display: inline-block; transition: all 0.3s ease; }
+    .toggle-switch.active { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .toggle-switch::after { content: ''; position: absolute; width: 22px; height: 22px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: all 0.3s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .toggle-switch.active::after { left: calc(100% - 25px); }
+    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 28px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
+    .btn-secondary { background: white; color: #667eea; border: 2px solid #667eea; padding: 12px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
+    .btn-secondary:hover { background: #667eea; color: white; transform: translateY(-2px); }
+    .btn-success { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 12px 28px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4); transition: all 0.3s ease; }
+    .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(67, 233, 123, 0.5); }
+    .btn-danger { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+    .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(250, 112, 154, 0.4); }
+    .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
+    .toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; padding: 20px; background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .search-input, select { padding: 10px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; min-width: 200px; transition: all 0.3s ease; }
+    .search-input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+    .table-container { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow-x: auto; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; min-width: 2000px; }
+    thead { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    th { padding: 16px 12px; text-align: center; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.5px; }
+    th:first-child { text-align: left; min-width: 320px; position: sticky; left: 0; z-index: 10; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    td { padding: 14px 12px; border: 1px solid #e2e8f0; text-align: center; font-size: 14px; }
+    td:first-child { text-align: left; position: sticky; left: 0; background: white; z-index: 5; border-right: 2px solid #667eea; }
+    tbody tr { transition: all 0.3s ease; }
+    tbody tr:hover { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); transform: scale(1.01); }
+    .student-info { display: flex; flex-direction: column; gap: 6px; }
+    .student-name { font-weight: 700; color: #2d3748; font-size: 15px; }
+    .student-phone { font-size: 13px; color: #718096; }
+    .student-class { font-size: 12px; color: #667eea; font-weight: 600; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); padding: 4px 12px; border-radius: 12px; display: inline-block; width: fit-content; }
+    .contact-buttons { display: flex !important; gap: 6px !important; margin-top: 8px !important; flex-wrap: wrap !important; }
+    .btn-contact { display: inline-flex !important; align-items: center !important; gap: 5px !important; padding: 6px 14px !important; border: none !important; border-radius: 8px !important; font-size: 12px !important; font-weight: 600 !important; cursor: pointer !important; transition: all 0.3s ease !important; text-decoration: none !important; color: white !important; }
+    .btn-contact:hover { transform: translateY(-2px) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important; }
+    .btn-contact i { font-size: 14px !important; }
+    .btn-call { background: linear-gradient(135deg, #06d6a0 0%, #04aa6d 100%) !important; }
+    .btn-sms { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important; }
+    .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%) !important; }
+    .btn-contact:active { transform: scale(0.98) !important; }
+    .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .status-yes { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; }
+    .status-no { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+    .success-message { display: none; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 16px 24px; border-radius: 12px; margin-bottom: 24px; font-weight: 600; text-align: center; box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4); animation: slideDown 0.4s ease; }
+    .success-message.show { display: block; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+    .pagination button { padding: 10px 16px; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+    .pagination button:hover, .pagination button.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; transform: translateY(-2px); }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .pagination-info { color: #4a5568; font-weight: 600; margin: 0 16px; }
+    .user-list { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 24px; }
+    .user-list h4 { color: #4a5568; margin-bottom: 16px; font-size: 18px; }
+    .user-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #f8fafc; border-radius: 12px; margin-bottom: 12px; border: 2px solid #e2e8f0; }
+    .user-item.pending { border-color: #ffd166; background: #fef3c7; }
+    .user-item.approved { border-color: #06d6a0; background: #d1fae5; }
+    .user-actions { display: flex; gap: 8px; }
+    .modal { display: none !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; background: rgba(0,0,0,0.6) !important; z-index: 1000 !important; justify-content: center !important; align-items: center !important; }
+    .modal.active { display: flex !important; }
+    .modal-content { background: white !important; padding: 32px !important; border-radius: 20px !important; width: 90% !important; max-width: 500px !important; position: relative !important; box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important; max-height: 90vh !important; overflow-y: auto !important; }
+    .close-modal { position: absolute !important; top: 16px !important; right: 20px !important; font-size: 28px !important; cursor: pointer !important; color: #64748b !important; }
+    .close-modal:hover { color: #ef476f !important; }
+    .footer { text-align: center; padding: 24px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); color: #a0aec0; margin-top: auto; border-radius: 20px 20px 0 0; }
+    @media (max-width: 768px) { .header { flex-direction: column; align-items: flex-start; } .nav { width: 100%; } .stats-grid { grid-template-columns: 1fr 1fr; } .toolbar { flex-direction: column; align-items: stretch; } .toolbar > * { width: 100%; } .form-row { grid-template-columns: 1fr; } .lessons-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <h1>🙏 Discipleship Tracker</h1>
+      <nav class="nav">
+        <button class="nav-btn active" id="btn-dashboard" onclick="showView('dashboard')" disabled>📊 Dashboard</button>
+        <button class="nav-btn" id="btn-data-entry" onclick="showView('data-entry')" disabled>📝 Data Entry</button>
+        <button class="nav-btn" id="btn-reports" onclick="showView('reports')" disabled>📋 Reports</button>
+        <button class="nav-btn" id="btn-users" onclick="showView('users')" disabled>👥 Users</button>
+      </nav>
+      <div class="user-controls">
+        <span id="user-display">🔐 Guest</span>
+        <button id="auth-btn" class="btn-secondary" style="padding:8px 16px;" onclick="toggleAuth()">Login</button>
+        <button id="register-btn" class="btn-success" style="padding:8px 16px;" onclick="openRegisterModal()">📝 Register</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div id="auth-warning" class="auth-warning">
+        <h3>🔐 Authentication Required</h3>
+        <p>Please login or register to access the discipleship tracker.</p>
+      </div>
+
+      <section id="dashboard" class="view">
+        <div class="stats-grid">
+          <div class="stat-card"><h3>Total Participants</h3><p id="total-participants">0</p></div>
+          <div class="stat-card"><h3>Avg. Progress</h3><p id="avg-attendance">0%</p></div>
+          <div class="stat-card"><h3>Total Lessons</h3><p id="lessons-completed">0/15</p></div>
+          <div class="stat-card"><h3>Active Groups</h3><p id="active-groups">0</p></div>
+        </div>
+        <div class="student-search-container">
+          <label>🔍 Search Student to View Progress</label>
+          <select class="student-selector" id="dashboard-student-selector" onchange="showIndividualProgress()">
+            <option value="">-- Select a Student --</option>
+          </select>
+          <span class="current-student-badge" id="current-student-badge" style="display:none;">📌 Viewing: <span id="current-student-name"></span></span>
+        </div>
+        <div class="individual-progress" id="individual-progress">
+          <h3>👤 <span id="individual-student-name">Student Progress</span></h3>
+          <div id="dashboard-contact-buttons"></div>
+          <div class="charts-grid">
+            <div class="chart-wrapper"><h4>📈 Lesson Completion Progress</h4><canvas id="individual-progress-chart"></canvas></div>
+            <div class="chart-wrapper"><h4>📊 Progress Overview</h4><canvas id="individual-overview-chart"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-wrapper"><h4>📈 Overall Lesson Completion Rates</h4><canvas id="overall-progress-chart"></canvas></div>
+          <div class="chart-wrapper"><h4>📊 Progress Distribution</h4><canvas id="progress-distribution-chart"></canvas></div>
+        </div>
+      </section>
+
+      <section id="data-entry" class="view">
+        <div id="success-message" class="success-message">✅ Data saved successfully!</div>
+        <div class="form-container">
+          <form id="data-entry-form" onsubmit="handleFormSubmit(event)">
+            <input type="hidden" id="student-id"/>
+            <div class="form-section">
+              <h4>👤 Student Information</h4>
+              <div class="form-row">
+                <div class="form-group"><label>Full Name *</label><input type="text" id="de-name" required placeholder="Enter student name"/></div>
+                <div class="form-group"><label>Phone Number *</label><input type="tel" id="de-phone" required placeholder="e.g., 0712345678"/></div>
+                <div class="form-group"><label>Class Number *</label><input type="text" id="de-class" required placeholder="e.g., Class A"/></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Email</label><input type="email" id="de-email" placeholder="student@email.com"/></div>
+                <div class="form-group"><label>Date Joined</label><input type="date" id="de-joined"/></div>
+              </div>
+              <div id="form-contact-buttons"></div>
+            </div>
+            <div class="form-section">
+              <h4>📚 Lesson Completion (Toggle On/Off)</h4>
+              <div class="lessons-grid" id="lessons-grid"></div>
+            </div>
+            <div class="toolbar">
+              <button type="submit" class="btn-primary">💾 Save & Clear</button>
+              <button type="button" class="btn-secondary" onclick="resetForm()">🔄 Clear Form</button>
+              <button type="button" class="btn-success" onclick="showView('reports')">📋 View Reports</button>
+            </div>
+          </form>
+        </div>
+      </section>
+            <section id="reports" class="view">
+        <div class="toolbar">
+          <input type="text" id="search-report" placeholder="🔍 Search students..." class="search-input" oninput="renderReportsTable()"/>
+          <select id="filter-class" onchange="renderReportsTable()"><option value="">All Classes</option></select>
+          <button class="btn-primary" onclick="showView('data-entry')">➕ Add Student</button>
+          <button class="btn-success" onclick="exportToCSV()">📥 CSV</button>
+          <button class="btn-secondary" onclick="exportToPDF()">📄 PDF</button>
+        </div>
+        <div class="table-container">
+          <table id="reports-table">
+            <thead><tr id="table-header"></tr></thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </section>
+
+      <section id="users" class="view">
+        <div class="toolbar"><h3>👥 User Management</h3></div>
+        <div class="user-list">
+          <h4>⏳ Pending Requests</h4>
+          <div id="pending-users-list"><p style="color:#64748b;padding:20px;">Loading...</p></div>
+        </div>
+        <div class="user-list">
+          <h4>✅ Authorized Users</h4>
+          <div id="authorized-users-list"><p style="color:#64748b;padding:20px;">Loading...</p></div>
+        </div>
+        <div class="form-container">
+          <h4>➕ Add New User Directly</h4>
+          <form onsubmit="addNewUser(event)" class="form-row">
+            <input type="email" id="new-user-email" placeholder="Email" required style="flex:1;"/>
+            <input type="password" id="new-user-password" placeholder="Password (min 6)" required minlength="6" style="flex:1;"/>
+            <input type="text" id="new-user-name" placeholder="Full Name" required style="flex:1;"/>
+            <button type="submit" class="btn-primary">Add User</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><p>© 2026 Discipleship Tracker - Secure Edition 🔐</p></footer>
+  </div>
+
+  <div id="register-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeRegisterModal()">&times;</span>
+      <h3 style="margin-bottom:20px;color:#1a202c;">📝 Request Access</h3>
+      <form id="register-form" onsubmit="handleRegister(event)">
+        <div class="form-group"><label>Email *</label><input type="email" id="reg-email" required placeholder="your@email.com"/></div>
+        <div class="form-group"><label>Password * (min 6 characters)</label><input type="password" id="reg-password" required minlength="6" placeholder="Create password"/></div>
+        <div class="form-group"><label>Full Name *</label><input type="text" id="reg-name" required placeholder="Your name"/></div>
+        <div class="form-group"><label>Role/Position *</label><input type="text" id="reg-role" required placeholder="e.g., Pastor, Teacher, Admin"/></div>
+        <button type="submit" class="btn-primary" style="width:100%;">📩 Submit Request</button>
+      </form>
+      <p style="margin-top:16px;color:#64748b;font-size:13px;">⚠️ Your request will be reviewed by an admin before access is granted.</p>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdSvUk6qpC857ZJfaDbniDlOKvWXPYYXY",
+      authDomain: "discipleship-dashboard-4d713.firebaseapp.com",
+      databaseURL: "https://discipleship-dashboard-4d713-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "discipleship-dashboard-4d713",
+      storageBucket: "discipleship-dashboard-4d713.firebasestorage.app",
+      messagingSenderId: "27738663604",
+      appId: "1:27738663604:web:bf1898247e0dd5a37805e1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    const app = {
+      lessons: ["Introduction","Salvation","Temptation","Prayers","Bible","Fellowship","Witnessing","Baptism","HolySpirit1","HolySpirit2","Giving","Deliverance1","Deliverance2","Evangelism","Kesha"],
+      students: {},
+      progress: {},
+      lessonStates: {},
+      charts: {},
+      currentPage: 1,
+      recordsPerPage: 20,
+      filteredStudents: [],
+      currentUser: null,
+      isAdmin: false
+    };
+
+    // ===== SECURITY: Admin Access Check =====
+    function checkAdminAccess() {
+      if (!app.isAdmin) {
+        alert('🔐 Admin access required!');
+        return false;
+      }
+      return true;
+    }
+
+    auth.onAuthStateChanged(function(user) {
+      app.currentUser = user;
+      console.log('🔐 Auth State:', user ? user.email : 'Logged out');
+      
+      if (user) {
+        document.getElementById('user-display').textContent = '👤 ' + (user.email || 'User');
+        document.getElementById('auth-btn').textContent = 'Logout';
+        document.getElementById('register-btn').style.display = 'none';
+        document.getElementById('auth-warning').style.display = 'none';
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.disabled = false);
+        
+        database.ref('authorized_users/' + user.uid).once('value').then(snapshot => {
+          const userData = snapshot.val();
+          console.log('📋 User Data:', userData);
+          
+          if (userData) {
+            app.isAdmin = userData.role === 'Admin';
+          } else {
+            console.log('⚠️ Auto-making admin');
+            app.isAdmin = true;
+            database.ref('authorized_users/' + user.uid).set({
+              email: user.email,
+              name: user.email.split('@')[0],
+              role: 'Admin',
+              status: 'approved',
+              createdAt: firebase.database.ServerValue.TIMESTAMP
+            });
+          }
+          
+          console.log('✅ Admin:', app.isAdmin);
+          document.getElementById('btn-users').disabled = !app.isAdmin;
+          loadUserData();
+        }).catch(err => {
+          console.error('❌ Error:', err);
+          app.isAdmin = true;
+          document.getElementById('btn-users').disabled = false;
+        });
+      } else {
+        document.getElementById('user-display').textContent = '🔐 Guest';
+        document.getElementById('auth-btn').textContent = 'Login';
+        document.getElementById('register-btn').style.display = 'inline-block';
+        document.getElementById('auth-warning').style.display = 'block';
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.disabled = true);
+        app.students = {};
+        app.progress = {};
+        updateDashboard();
+      }
+    });
+
+    function loadUserData() {
+      console.log('📊 Loading data...');
+      database.ref('students').on('value', snapshot => {
+        app.students = snapshot.val() || {};
+        renderReportsTable();
+        updateDashboard();
+        updateStudentSelector();
+        updateClassFilter();
+      });
+      database.ref('progress').on('value', snapshot => {
+        app.progress = snapshot.val() || {};
+        renderReportsTable();
+        updateDashboard();
+      });
+      if (app.isAdmin) loadUserManagement();
+    }
+
+    // ===== SECURE View Switching =====
+    window.showView = function(viewName) {
+      console.log('📍 View:', viewName, '| Admin:', app.isAdmin);
+      
+      // Block non-admins from accessing Users view
+      if (viewName === 'users' && !app.isAdmin) {
+        alert('🔐 Admin access required!');
+        return;
+      }
+      
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach((b, i) => {
+        b.classList.remove('active');
+        if (['dashboard', 'data-entry', 'reports', 'users'][i] === viewName) b.classList.add('active');
+      });
+      document.getElementById(viewName).classList.add('active');
+      
+      if (viewName === 'reports') { app.currentPage = 1; renderReportsTable(); }
+      if (viewName === 'dashboard') { updateDashboard(); updateStudentSelector(); }
+      if (viewName === 'users') { 
+        if (checkAdminAccess()) {
+          console.log('👥 Loading users...'); 
+          loadUserManagement(); 
+        }
+      }
+    };
+
+    window.toggleAuth = function() {
+      if (app.currentUser) {
+        auth.signOut().then(() => alert('✅ Logged out'));
+      } else {
+        const email = prompt('Email:');
+        if (email) {
+          const password = prompt('Password:');
+          auth.signInWithEmailAndPassword(email, password)
+            .then(() => alert('✅ Login successful!'))
+            .catch(err => alert('❌ ' + err.message));
+        }
+      }
+    };
+
+    window.openRegisterModal = function() { document.getElementById('register-modal').classList.add('active'); };
+    window.closeRegisterModal = function() { document.getElementById('register-modal').classList.remove('active'); };
+
+    window.handleRegister = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const name = document.getElementById('reg-name').value.trim();
+      const role = document.getElementById('reg-role').value.trim();
+      
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(uc => database.ref('pending_users/' + uc.user.uid).set({ email, name, role, requestedAt: firebase.database.ServerValue.TIMESTAMP, status: 'pending' }))
+        .then(() => { alert('✅ Request submitted!'); closeRegisterModal(); auth.signOut(); })
+        .catch(err => alert('❌ ' + err.message));
+    };
+
+    function loadUserManagement() {
+      console.log('👥 Loading user management...');
+      const pendingList = document.getElementById('pending-users-list');
+      const authorizedList = document.getElementById('authorized-users-list');
+      
+      database.ref('pending_users').on('value', snapshot => {
+        const users = snapshot.val() || {};
+        console.log('⏳ Pending:', users);
+        pendingList.innerHTML = Object.keys(users).length === 0 ? 
+          '<p style="color:#64748b;padding:20px;text-align:center;">No pending requests</p>' :
+          Object.entries(users).map(([uid, u]) => `<div class="user-item pending"><div><strong>${u.name}</strong><br><small>${u.email}</small><br><small>${u.role}</small></div><div class="user-actions"><button class="btn-success btn-sm" onclick="approveUser('${uid}','${u.email}')">✅</button><button class="btn-danger btn-sm" onclick="rejectUser('${uid}')">❌</button></div></div>`).join('');
+      });
+
+      database.ref('authorized_users').on('value', snapshot => {
+        const users = snapshot.val() || {};
+        console.log('✅ Authorized:', users);
+        authorizedList.innerHTML = Object.keys(users).length === 0 ?
+          '<p style="color:#64748b;padding:20px;text-align:center;">No authorized users</p>' :
+          Object.entries(users).map(([uid, u]) => `<div class="user-item approved"><div><strong>${u.name}</strong> ${u.role==='Admin'?'<span style="background:#667eea;color:white;padding:2px 8px;border-radius:4px;font-size:11px;">Admin</span>':''}<br><small>${u.email}</small><br><small>${u.role}</small></div><div class="user-actions">${uid!==app.currentUser.uid?`<button class="btn-danger btn-sm" onclick="removeUser('${uid}','${u.email}')">❌</button>`:'<small>(You)</small>'}</div></div>`).join('');
+      });
+    }
+
+    // ===== SECURE User Management Functions =====
+    window.approveUser = function(uid, email) {
+      if (!checkAdminAccess()) return;
+      if (!confirm('Approve ' + email + '?')) return;
+      database.ref('pending_users/' + uid).once('value').then(s => 
+        database.ref('authorized_users/' + uid).set({
+          ...s.val(), 
+          approvedAt: firebase.database.ServerValue.TIMESTAMP, 
+          status: 'approved'
+        })
+      ).then(() => database.ref('pending_users/' + uid).remove())
+        .then(() => alert('✅ Approved!'));
+    };
+
+    window.rejectUser = function(uid) {
+      if (!checkAdminAccess()) return;
+      if (!confirm('Reject?')) return;
+      database.ref('pending_users/' + uid).remove().then(() => alert('❌ Rejected'));
+    };
+
+    // ===== SECURE removeUser - CANNOT remove yourself or other admins without confirmation =====
+    window.removeUser = function(uid, email) {
+      if (!checkAdminAccess()) return;
+      
+      // Prevent admin from removing themselves
+      if (uid === app.currentUser.uid) {
+        alert('⚠️ You cannot remove yourself!');
+        return;
+      }
+      
+      // Check if trying to remove another admin
+      database.ref('authorized_users/' + uid).once('value').then(snapshot => {
+        const userData = snapshot.val();
+        if (userData && userData.role === 'Admin') {
+          if (!confirm('⚠️ You are about to remove another ADMIN. Continue?')) {
+            return;
+          }
+        }
+        
+        if (!confirm('Remove ' + email + '?')) return;
+        database.ref('authorized_users/' + uid).remove().then(() => alert('✅ Removed'));
+      });
+    };
+
+    // ===== SECURE addNewUser =====
+    window.addNewUser = function(e) {
+      e.preventDefault();
+      if (!checkAdminAccess()) return;
+      
+      const email = document.getElementById('new-user-email').value.trim();
+      const password = document.getElementById('new-user-password').value;
+      const name = document.getElementById('new-user-name').value.trim();
+      
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(uc => database.ref('authorized_users/' + uc.user.uid).set({ 
+          email, 
+          name, 
+          role: 'User', 
+          createdAt: firebase.database.ServerValue.TIMESTAMP, 
+          status: 'approved', 
+          createdBy: app.currentUser.uid 
+        }))
+        .then(() => { alert('✅ User created!'); e.target.reset(); })
+        .catch(err => alert('❌ ' + err.message));
+    };
+    
+        function populateLessonsGrid() {
+      const grid = document.getElementById('lessons-grid');
+      if (!grid) return;
+      grid.innerHTML = app.lessons.map((l, i) => `<div class="lesson-item" data-lesson="${l}"><label>${l}</label><span class="toggle-switch" data-lesson="${l}" onclick="toggleLesson(this)"></span></div>`).join('');
+    }
+
+    window.toggleLesson = function(el) {
+      el.classList.toggle('active');
+      app.lessonStates[el.getAttribute('data-lesson')] = el.classList.contains('active');
+    };
+
+    window.handleFormSubmit = function(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('student-id').value || Date.now().toString();
+      const name = document.getElementById('de-name').value.trim();
+      const phone = document.getElementById('de-phone').value.trim();
+      const classNum = document.getElementById('de-class').value.trim();
+      const email = document.getElementById('de-email').value.trim();
+      const joined = document.getElementById('de-joined').value || new Date().toISOString();
+      
+      if (!name || !phone || !classNum) { alert('⚠️ Fill Name, Phone, Class'); return; }
+      
+      const student = { name, phone, class: classNum, email, group: classNum, joined, updatedAt: Date.now() };
+      database.ref('students/' + studentId).set(student).then(() => {
+        const progressData = {};
+        app.lessons.forEach(l => { progressData[l] = { completed: app.lessonStates[l] || false, updatedAt: Date.now() }; });
+        return database.ref('progress/' + studentId).set(progressData);
+      }).then(() => {
+        document.getElementById('success-message').classList.add('show');
+        setTimeout(() => document.getElementById('success-message').classList.remove('show'), 3000);
+        resetForm();
+      }).catch(err => alert('Error: ' + err.message));
+    };
+
+    window.resetForm = function() {
+      document.getElementById('data-entry-form').reset();
+      document.getElementById('student-id').value = '';
+      document.getElementById('form-contact-buttons').innerHTML = '';
+      document.querySelectorAll('.toggle-switch').forEach(t => t.classList.remove('active'));
+      app.lessonStates = {};
+    };
+
+    function addContactButtonsToForm(phone) {
+      const contactDiv = document.getElementById('form-contact-buttons');
+      if (!contactDiv || !phone) return;
+      const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+      let whatsappPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.substring(1) : cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
+      contactDiv.innerHTML = `<div style="margin:16px 0;padding:16px;background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:12px;border:2px solid #e2e8f0;"><strong style="color:#4a5568;display:block;margin-bottom:12px;font-size:14px;"><i class="fas fa-mobile-alt"></i> Quick Contact:</strong><div class="contact-buttons"><a href="tel:${phone}" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a><a href="sms:${phone}" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/${whatsappPhone}" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div>`;
+    }
+
+    function updateStudentSelector() {
+      const selector = document.getElementById('dashboard-student-selector');
+      if (!selector) return;
+      const sorted = Object.entries(app.students).sort((a, b) => (b[1].updatedAt || 0) - (a[1].updatedAt || 0));
+      selector.innerHTML = '<option value="">-- Select --</option>' + sorted.map(([id, s]) => `<option value="${id}">${s.name} (${s.class})</option>`).join('');
+      if (sorted.length > 0) { selector.value = sorted[0][0]; showIndividualProgress(); }
+    }
+
+    window.showIndividualProgress = function() {
+      const studentId = document.getElementById('dashboard-student-selector').value;
+      const container = document.getElementById('individual-progress');
+      const badge = document.getElementById('current-student-badge');
+      const contactDiv = document.getElementById('dashboard-contact-buttons');
+      
+      if (!studentId || !app.students[studentId]) {
+        container.classList.remove('show');
+        badge.style.display = 'none';
+        contactDiv.innerHTML = '';
+        return;
+      }
+      
+      container.classList.add('show');
+      badge.style.display = 'inline-block';
+      const student = app.students[studentId];
+      const progressData = app.progress[studentId] || {};
+      
+      document.getElementById('current-student-name').textContent = student.name;
+      document.getElementById('individual-student-name').textContent = student.name + ' - Progress';
+      
+      const cleanPhone = student.phone.replace(/[\s\-\(\)]/g, '');
+      const whatsappPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.substring(1) : cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
+      
+      contactDiv.innerHTML = `<div style="margin:16px 0;padding:16px;background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:12px;border:2px solid #e2e8f0;"><strong style="color:#4a5568;display:block;margin-bottom:12px;font-size:14px;"><i class="fas fa-mobile-alt"></i> Quick Contact:</strong><div class="contact-buttons"><a href="tel:${student.phone}" class="btn-contact btn-call"><i class="fas fa-phone"></i> Call</a><a href="sms:${student.phone}" class="btn-contact btn-sms"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/${whatsappPhone}" target="_blank" class="btn-contact btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div>`;
+      
+      let completedCount = 0;
+      const lessonData = [], lessonLabels = [];
+      app.lessons.forEach(l => {
+        const done = progressData[l] && progressData[l].completed;
+        if (done) completedCount++;
+        lessonLabels.push(l);
+        lessonData.push(done ? 100 : 0);
+      });
+      
+      if (app.charts.individualProgress) app.charts.individualProgress.destroy();
+      if (app.charts.individualOverview) app.charts.individualOverview.destroy();
+      
+      app.charts.individualProgress = new Chart(document.getElementById('individual-progress-chart'), {
+        type: 'bar',
+        data: { labels: lessonLabels, datasets: [{ label: 'Status', data: lessonData, backgroundColor: lessonData.map(v => v === 100 ? 'rgba(67,233,123,0.8)' : 'rgba(250,112,154,0.8)'), borderWidth: 2, borderRadius: 8 }] },
+        options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
+      });
+      
+      app.charts.individualOverview = new Chart(document.getElementById('individual-overview-chart'), {
+        type: 'doughnut',
+        data: { labels: ['Completed', 'Remaining'], datasets: [{ data: [completedCount, app.lessons.length - completedCount], backgroundColor: ['rgba(67,233,123,0.8)', 'rgba(250,112,154,0.8)'], borderWidth: 3 }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+      });
+    };
+
+    window.renderReportsTable = function() {
+      const header = document.getElementById('table-header');
+      const body = document.getElementById('table-body');
+      if (!header || !body) return;
+      
+      const searchTerm = (document.getElementById('search-report').value || '').toLowerCase();
+      const classFilter = document.getElementById('filter-class').value || '';
+      
+      app.filteredStudents = Object.keys(app.students).filter(id => {
+        const s = app.students[id];
+        return (!searchTerm || s.name.toLowerCase().includes(searchTerm) || s.phone.includes(searchTerm)) && (!classFilter || s.class === classFilter);
+      });
+      
+      header.innerHTML = '<th style="text-align:left;min-width:320px;">Student</th>' + app.lessons.map(l => `<th style="font-size:11px;writing-mode:vertical-lr;transform:rotate(180deg);height:100px;">${l}</th>`).join('') + '<th>Progress</th><th>Actions</th>';
+      
+      const totalPages = Math.ceil(app.filteredStudents.length / app.recordsPerPage);
+      const pageStudents = app.filteredStudents.slice((app.currentPage - 1) * app.recordsPerPage, app.currentPage * app.recordsPerPage);
+      
+      body.innerHTML = pageStudents.map(id => {
+        const s = app.students[id];
+        const p = app.progress[id] || {};
+        const completedCount = app.lessons.filter(l => p[l] && p[l].completed).length;
+        const percent = Math.round((completedCount / app.lessons.length) * 100);
+        const cleanPhone = s.phone.replace(/[\s\-\(\)]/g, '');
+        const waPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.substring(1) : cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
+        
+        return `<tr onclick="if(!event.target.classList.contains('btn-danger')&&!event.target.closest('.btn-contact'))loadStudentForEdit('${id}')"><td><div class="student-info"><span class="student-name">${s.name}</span><span class="student-phone"><i class="fas fa-phone"></i> ${s.phone}</span><span class="student-class"><i class="fas fa-graduation-cap"></i> ${s.class}</span><div class="contact-buttons"><a href="tel:${s.phone}" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a><a href="sms:${s.phone}" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/${waPhone}" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div></td>` +
+          app.lessons.map(l => `<td><span class="status-badge ${(p[l]&&p[l].completed)?'status-yes':'status-no'}">${(p[l]&&p[l].completed)?'Yes':'No'}</span></td>`).join('') +
+          `<td><small style="font-weight:700;color:#667eea;">${percent}% (${completedCount}/${app.lessons.length})</small></td>` +
+          `<td><button class="btn-danger btn-sm" onclick="deleteStudent('${id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
+      }).join('');
+      
+      if (app.filteredStudents.length === 0) body.innerHTML = '<tr><td colspan="' + (app.lessons.length + 2) + '" style="padding:40px;text-align:center;color:#718096;">No students found</td></tr>';
+      renderPagination(totalPages);
+    };
+
+    function renderPagination(totalPages) {
+      const p = document.getElementById('pagination');
+      if (!p) return;
+      p.innerHTML = totalPages <= 1 ? '' : `<button onclick="changePage(1)" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-double-left"></i></button><button onclick="changePage(${app.currentPage-1})" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-left"></i></button><span class="pagination-info">${app.currentPage}/${totalPages}</span><button onclick="changePage(${app.currentPage+1})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-right"></i></button><button onclick="changePage(${totalPages})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-double-right"></i></button>`;
+    }
+
+    window.changePage = function(page) { app.currentPage = page; renderReportsTable(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+    window.loadStudentForEdit = function(id) {
+      const s = app.students[id];
+      if (!s) return;
+      const p = app.progress[id] || {};
+      document.getElementById('student-id').value = id;
+      document.getElementById('de-name').value = s.name || '';
+      document.getElementById('de-phone').value = s.phone || '';
+      document.getElementById('de-class').value = s.class || '';
+      document.getElementById('de-email').value = s.email || '';
+      document.getElementById('de-joined').value = s.joined ? s.joined.split('T')[0] : '';
+      if (s.phone) addContactButtonsToForm(s.phone);
+      app.lessons.forEach(l => {
+        const toggle = document.querySelector(`.toggle-switch[data-lesson="${l}"]`);
+        if (toggle) { toggle.classList.toggle('active', p[l] && p[l].completed); app.lessonStates[l] = p[l] && p[l].completed; }
+      });
+      showView('data-entry');
+    };
+
+    window.deleteStudent = function(id) {
+      if (!confirm('Delete?')) return;
+      database.ref('students/' + id).remove().then(() => database.ref('progress/' + id).remove()).then(() => alert('✅ Deleted'));
+    };
+
+    function updateClassFilter() {
+      const f = document.getElementById('filter-class');
+      if (!f) return;
+      const classes = [...new Set(Object.values(app.students).map(s => s.class).filter(c => c))];
+      f.innerHTML = '<option value="">All Classes</option>' + classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    function updateDashboard() {
+      document.getElementById('total-participants').textContent = Object.keys(app.students).length;
+      let total = 0, count = 0;
+      Object.keys(app.students).forEach(id => {
+        const p = app.progress[id] || {};
+        const c = app.lessons.filter(l => p[l] && p[l].completed).length;
+        total += Math.round((c / app.lessons.length) * 100);
+        count++;
+      });
+      const avg = count > 0 ? Math.round(total / count) : 0;
+      document.getElementById('avg-attendance').textContent = avg + '%';
+      document.getElementById('lessons-completed').textContent = Math.round(avg / 100 * app.lessons.length) + '/' + app.lessons.length;
+      document.getElementById('active-groups').textContent = [...new Set(Object.values(app.students).map(s => s.class))].length;
+      updateCharts();
+    }
+
+    function updateCharts() {
+      const rates = app.lessons.map(l => {
+        let c = 0, t = 0;
+        Object.keys(app.progress).forEach(id => { if (app.progress[id][l]) { t++; if (app.progress[id][l].completed) c++; } });
+        return t > 0 ? Math.round((c / t) * 100) : 0;
+      });
+      if (app.charts.overall) app.charts.overall.destroy();
+      if (app.charts.distribution) app.charts.distribution.destroy();
+      app.charts.overall = new Chart(document.getElementById('overall-progress-chart'), {
+        type: 'bar',
+        data: { labels: app.lessons, datasets: [{ label: 'Rate', data: rates, backgroundColor: 'rgba(102,126,234,0.8)', borderRadius: 8 }] },
+        options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+      });
+      const high = app.lessons.filter((_, i) => rates[i] >= 50).length;
+      app.charts.distribution = new Chart(document.getElementById('progress-distribution-chart'), {
+        type: 'pie',
+        data: { labels: ['High (>50%)', 'Low (<50%)'], datasets: [{ data: [high, app.lessons.length - high], backgroundColor: ['rgba(67,233,123,0.8)', 'rgba(250,112,154,0.8)'] }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+
+    window.exportToCSV = function() {
+      let csv = 'Name,Phone,Class,Email,' + app.lessons.join(',') + ',Progress\n';
+      Object.keys(app.students).forEach(id => {
+        const s = app.students[id], p = app.progress[id] || {};
+        let row = `"${s.name}","${s.phone}","${s.class}","${s.email||''}"`;
+        app.lessons.forEach(l => { row += ',' + ((p[l]&&p[l].completed)?'Yes':'No'); });
+        csv += row + '\n';
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'discipleship_' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+      alert('✅ CSV exported');
+    };
+
+    window.exportToPDF = function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('l', 'mm', 'a4');
+      doc.text('Discipleship Report', 14, 15);
+      const headers = [['Student','Phone','Class'].concat(app.lessons).concat(['Progress'])];
+      const data = Object.keys(app.students).map(id => {
+        const s = app.students[id], p = app.progress[id] || {};
+        const c = app.lessons.filter(l => p[l] && p[l].completed).length;
+        return [s.name, s.phone, s.class].concat(app.lessons.map(l => (p[l]&&p[l].completed)?'Yes':'No')).concat([Math.round((c/app.lessons.length)*100)+'%']);
+      });
+      doc.autoTable({ head: headers, body: data, startY: 20 });
+      doc.save('report_' + new Date().toISOString().split('T')[0] + '.pdf');
+      alert('✅ PDF exported');
+    };
+
+    window.addEventListener('DOMContentLoaded', function() {
+      populateLessonsGrid();
+      document.getElementById('de-joined').value = new Date().toISOString().split('T')[0];
+      console.log('✅ App Ready - Secure Admin Protection Enabled! 🔐');
+    });
+  </script>
+</body>
+</html>
