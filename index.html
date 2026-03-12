@@ -224,7 +224,7 @@ tbody tr:hover {
 <body>
   <div class="app-container">
     <header class="header">
-      <h1> Discipleship Tracker</h1>
+      <h1>🙏 Discipleship Tracker</h1>
       <nav class="nav">
         <button class="nav-btn active" id="btn-dashboard" onclick="showView('dashboard')" disabled>📊 Dashboard</button>
         <button class="nav-btn" id="btn-data-entry" onclick="showView('data-entry')" disabled>📝 Data Entry</button>
@@ -232,7 +232,7 @@ tbody tr:hover {
         <button class="nav-btn" id="btn-users" onclick="showView('users')" disabled>👥 Users</button>
       </nav>
       <div class="user-controls">
-        <span id="user-display"> Guest</span>
+        <span id="user-display">🔐 Guest</span>
         <button id="auth-btn" class="btn-secondary" style="padding:8px 16px;" onclick="toggleAuth()">Login</button>
         <button id="register-btn" class="btn-success" style="padding:8px 16px;" onclick="openRegisterModal()">📝 Register</button>
       </div>
@@ -240,7 +240,7 @@ tbody tr:hover {
 
     <main class="content">
       <div id="auth-warning" class="auth-warning">
-        <h3> Authentication Required</h3>
+        <h3>🔐 Authentication Required</h3>
         <p>Please login or register to access the discipleship tracker.</p>
       </div>
 
@@ -273,14 +273,14 @@ tbody tr:hover {
         </div>
       </section>
             <section id="data-entry" class="view">
-        <div id="success-message" class="success-message" Data saved successfully!</div>
+        <div id="success-message" class="success-message">✅ Data saved successfully!</div>
         <div class="form-container">
           <form id="data-entry-form" onsubmit="handleFormSubmit(event)">
             <input type="hidden" id="student-id"/>
             <div class="form-section">
               <h4>👤 Student Information</h4>
               <div class="form-row">
-                <div class="form-group"><label>Full Name *</label><input type="text" id="de-name" required placeholder="Enter student name"/></div>
+  <div class="form-group"><label>Full Name *</label><input type="text" id="de-name" required placeholder="Enter student name"/></div>
                 <div class="form-group"><label>Phone Number *</label><input type="tel" id="de-phone" required placeholder="e.g., 0712345678"/></div>
                 <div class="form-group">
                   <label>Class Number *</label>
@@ -312,8 +312,8 @@ tbody tr:hover {
     <input type="text" id="search-report" placeholder="🔍 Search by name, class, or phone..." class="search-input" oninput="renderReportsTable()" style="flex:1;min-width:250px;"/>
     <select id="filter-class" onchange="renderReportsTable()"><option value="">All Classes</option></select>
     <button class="btn-primary" onclick="showView('data-entry')">➕ Add Student</button>
-    <button class="btn-success" onclick="exportToCSV()"> CSV</button>
-    <button class="btn-secondary" onclick="exportToPDF()"> PDF</button>
+    <button class="btn-success" onclick="exportToCSV()">📥 CSV</button>
+    <button class="btn-secondary" onclick="exportToPDF()">📄 PDF</button>
   </div>
   
   <div class="table-wrapper">
@@ -331,11 +331,11 @@ tbody tr:hover {
       <section id="users" class="view">
         <div class="toolbar"><h3>👥 User Management</h3></div>
         <div class="user-list">
-          <h4> Pending Requests</h4>
+          <h4>⏳ Pending Requests</h4>
           <div id="pending-users-list"><p style="color:#64748b;padding:20px;">Loading...</p></div>
         </div>
         <div class="user-list">
-          <h4> Authorized Users</h4>
+          <h4>✅ Authorized Users</h4>
           <div id="authorized-users-list"><p style="color:#64748b;padding:20px;">Loading...</p></div>
         </div>
         <div class="form-container">
@@ -350,21 +350,21 @@ tbody tr:hover {
       </section>
     </main>
 
-    <footer class="footer"><p>© 2026 Discipleship Tracker - Smart Edition </p></footer>
+    <footer class="footer"><p>© 2026 Discipleship Tracker - Smart Edition 🔐</p></footer>
   </div>
 
   <div id="register-modal" class="modal">
     <div class="modal-content">
       <span class="close-modal" onclick="closeRegisterModal()">&times;</span>
-      <h3 style="margin-bottom:20px;color:#1a202c;"> Request Access</h3>
+      <h3 style="margin-bottom:20px;color:#1a202c;">📝 Request Access</h3>
       <form id="register-form" onsubmit="handleRegister(event)">
         <div class="form-group"><label>Email *</label><input type="email" id="reg-email" required placeholder="your@email.com"/></div>
         <div class="form-group"><label>Password * (min 6 characters)</label><input type="password" id="reg-password" required minlength="6" placeholder="Create password"/></div>
         <div class="form-group"><label>Full Name *</label><input type="text" id="reg-name" required placeholder="Your name"/></div>
         <div class="form-group"><label>Role/Position *</label><input type="text" id="reg-role" required placeholder="e.g., Pastor, Teacher, Admin"/></div>
-        <button type="submit" class="btn-primary" style="width:100%;"> Submit Request</button>
+        <button type="submit" class="btn-primary" style="width:100%;">📩 Submit Request</button>
       </form>
-      <p style="margin-top:16px;color:#64748b;font-size:13px;"> Your request will be reviewed by an admin before access is granted.</p>
+      <p style="margin-top:16px;color:#64748b;font-size:13px;">⚠️ Your request will be reviewed by an admin before access is granted.</p>
     </div>
   </div>
 
@@ -398,13 +398,13 @@ tbody tr:hover {
     };
 
     function checkAdminAccess() {
-      if (!app.isAdmin) { alert(' Admin access required!'); return false; }
+      if (!app.isAdmin) { alert('🔐 Admin access required!'); return false; }
       return true;
     }
 
     auth.onAuthStateChanged(function(user) {
       app.currentUser = user;
-      console.log(' Auth State:', user ? user.email : 'Logged out');
+      console.log('🔐 Auth State:', user ? user.email : 'Logged out');
       
       if (user) {
         document.getElementById('user-display').textContent = '👤 ' + (user.email || 'User');
@@ -415,12 +415,12 @@ tbody tr:hover {
         
         database.ref('authorized_users/' + user.uid).once('value').then(snapshot => {
           const userData = snapshot.val();
-          console.log(' User Data:', userData);
+          console.log('📋 User Data:', userData);
           
           if (userData) {
             app.isAdmin = userData.role === 'Admin';
           } else {
-            console.log(' Auto-making admin');
+            console.log('⚠️ Auto-making admin');
             app.isAdmin = true;
             database.ref('authorized_users/' + user.uid).set({
               email: user.email,
@@ -431,17 +431,17 @@ tbody tr:hover {
             });
           }
           
-          console.log(' Admin:', app.isAdmin);
+          console.log('✅ Admin:', app.isAdmin);
           document.getElementById('btn-users').disabled = !app.isAdmin;
           calculateNextClassNumber();
           loadUserData();
         }).catch(err => {
-          console.error(' Error:', err);
+          console.error('❌ Error:', err);
           app.isAdmin = true;
           document.getElementById('btn-users').disabled = false;
         });
       } else {
-        document.getElementById('user-display').textContent = ' Guest';
+        document.getElementById('user-display').textContent = '🔐 Guest';
         document.getElementById('auth-btn').textContent = 'Login';
         document.getElementById('register-btn').style.display = 'inline-block';
         document.getElementById('auth-warning').style.display = 'block';
@@ -451,7 +451,6 @@ tbody tr:hover {
         updateDashboard();
       }
     });
-
     function loadUserData() {
       console.log('📊 Loading data...');
       database.ref('students').on('value', snapshot => {
@@ -492,7 +491,7 @@ tbody tr:hover {
       console.log('📍 View:', viewName, '| Admin:', app.isAdmin);
       
       if (viewName === 'users' && !app.isAdmin) {
-        alert(' Admin access required!');
+        alert('🔐 Admin access required!');
         return;
       }
       
@@ -518,7 +517,7 @@ tbody tr:hover {
 
     window.toggleAuth = function() {
       if (app.currentUser) {
-        auth.signOut().then(() => alert(' Logged out'));
+        auth.signOut().then(() => alert('✅ Logged out'));
       } else {
         const email = prompt('Email:');
         if (email) {
@@ -710,7 +709,7 @@ tbody tr:hover {
         return;
       }
       
-      container.classList.add('show');
+       container.classList.add('show');
       badge.style.display = 'inline-block';
       const student = app.students[studentId];
       const progressData = app.progress[studentId] || {};
@@ -976,7 +975,7 @@ tbody tr:hover {
     window.addEventListener('DOMContentLoaded', function() {
       populateLessonsGrid();
       document.getElementById('de-joined').value = new Date().toISOString().split('T')[0];
-      console.log('✅ App Ready - Fixed Headers Enabled! ');
+      console.log('✅ App Ready - Fixed Headers Enabled! 🔐');
     });
   </script>
 </body>
