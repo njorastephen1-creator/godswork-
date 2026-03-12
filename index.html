@@ -15,12 +15,17 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
     .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-logo { height: 32px; width: 32px; border-radius: 8px; object-fit: cover; border: 2px solid white; }
     .header h1 { font-size: 26px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
     .nav { display: flex; gap: 10px; flex-wrap: wrap; }
     .nav-btn { background: rgba(255,255,255,0.25); border: 2px solid white; color: white; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s ease; backdrop-filter: blur(10px); }
     .nav-btn:hover, .nav-btn.active { background: white; color: #f5576c; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .user-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .exam-portal-link { background: #10b981; color: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; transition: background 0.3s; }
+    .exam-portal-link:hover { background: #059669; }
+    .user-profile { display: flex; align-items: center; gap: 8px; font-size: 14px; }
     .content { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
     .view { display: none !important; }
     .view.active { display: block !important; animation: fadeIn 0.4s ease; }
@@ -74,114 +79,21 @@
     .toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; padding: 20px; background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .search-input, select { padding: 10px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; min-width: 200px; transition: all 0.3s ease; }
     .search-input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
-    
-/* ===== FIXED HEADER TABLE STYLES - CORRECTED ===== */
-.table-wrapper {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  margin-bottom: 24px;
-  overflow-x: auto; /* Allow horizontal scroll */
-  max-height: 70vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.table-header-fixed {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  flex-shrink: 0; /* Prevent header from shrinking */
-}
-
-.table-body-scrollable {
-  overflow: auto; /* Allow both vertical and horizontal scroll */
-  flex: 1;
-  max-height: calc(70vh - 60px);
-}
-
-.table-body-scrollable::-webkit-scrollbar {
-  width: 8px;
-  height: 8px; /* Horizontal scrollbar */
-}
-
-.table-body-scrollable::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.table-body-scrollable::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
-}
-
-.table-body-scrollable::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  min-width: 2000px; /* Ensure table is wide enough for horizontal scroll */
-}
-
-thead {
-  background: transparent;
-  color: white;
-}
-
-th {
-  padding: 16px 12px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 13px;
-  border: none;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  position: sticky;
-  top: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  z-index: 10;
-}
-
-th:first-child {
-  text-align: left;
-  min-width: 320px;
-  position: sticky;
-  left: 0;
-  z-index: 11;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-td {
-  padding: 14px 12px;
-  border-bottom: 1px solid #e2e8f0;
-  text-align: center;
-  font-size: 14px;
-  background: white;
-}
-
-td:first-child {
-  text-align: left;
-  position: sticky;
-  left: 0;
-  background: white;
-  z-index: 5;
-  border-right: 2px solid #667eea;
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
-}
-
-tbody tr:hover {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-    
+    .table-wrapper { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 24px; overflow-x: auto; max-height: 70vh; display: flex; flex-direction: column; }
+    .table-header-fixed { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex-shrink: 0; }
+    .table-body-scrollable { overflow: auto; flex: 1; max-height: calc(70vh - 60px); }
+    .table-body-scrollable::-webkit-scrollbar { width: 8px; height: 8px; }
+    .table-body-scrollable::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    .table-body-scrollable::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; }
+    .table-body-scrollable::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 2000px; }
+    thead { background: transparent; color: white; }
+    th { padding: 16px 12px; text-align: center; font-weight: 700; font-size: 13px; border: none; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 10; }
+    th:first-child { text-align: left; min-width: 320px; position: sticky; left: 0; z-index: 11; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 14px; background: white; }
+    td:first-child { text-align: left; position: sticky; left: 0; background: white; z-index: 5; border-right: 2px solid #667eea; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
     .student-info { display: flex; flex-direction: column; gap: 6px; }
     .student-name { font-weight: 700; color: #2d3748; font-size: 15px; }
     .student-phone { font-size: 13px; color: #718096; }
@@ -224,26 +136,31 @@ tbody tr:hover {
 <body>
   <div class="app-container">
     <header class="header">
-      <h1>🙏 Discipleship Tracker</h1>
+      <div class="header-left">
+        <img src="download.jfif" alt="Logo" class="header-logo">
+        <h1>Discipleship Tracker</h1>
+      </div>
       <nav class="nav">
-        <button class="nav-btn active" id="btn-dashboard" onclick="showView('dashboard')" disabled>📊 Dashboard</button>
+        <button class="nav-btn active" id="btn-dashboard" onclick="showView('dashboard')" disabled>Dashboard</button>
         <button class="nav-btn" id="btn-data-entry" onclick="showView('data-entry')" disabled>📝 Data Entry</button>
         <button class="nav-btn" id="btn-reports" onclick="showView('reports')" disabled>📋 Reports</button>
         <button class="nav-btn" id="btn-users" onclick="showView('users')" disabled>👥 Users</button>
       </nav>
       <div class="user-controls">
+        <a href="https://njorastephen1-creator.github.io/school-/" target="_blank" class="exam-portal-link">
+          <i class="fas fa-graduation-cap"></i> Exam Portal
+        </a>
         <span id="user-display">🔐 Guest</span>
         <button id="auth-btn" class="btn-secondary" style="padding:8px 16px;" onclick="toggleAuth()">Login</button>
         <button id="register-btn" class="btn-success" style="padding:8px 16px;" onclick="openRegisterModal()">📝 Register</button>
       </div>
     </header>
-
     <main class="content">
       <div id="auth-warning" class="auth-warning">
         <h3>🔐 Authentication Required</h3>
         <p>Please login or register to access the discipleship tracker.</p>
       </div>
-
+            <!-- Dashboard View -->
       <section id="dashboard" class="view">
         <div class="stats-grid">
           <div class="stat-card"><h3>Total Participants</h3><p id="total-participants">0</p></div>
@@ -252,123 +169,174 @@ tbody tr:hover {
           <div class="stat-card"><h3>Active Groups</h3><p id="active-groups">0</p></div>
         </div>
         <div class="student-search-container">
-          <label>🔍 Search Student (Type name, class, or phone)</label>
+          <label>Search Student (Type name, class, or phone)</label>
           <input type="text" id="dashboard-search-input" class="search-input" placeholder="Start typing to search..." oninput="searchStudentsDashboard()" style="width:100%;max-width:500px;margin-bottom:12px;"/>
           <select class="student-selector" id="dashboard-student-selector" onchange="showIndividualProgress()">
             <option value="">-- Select a Student --</option>
           </select>
-          <span class="current-student-badge" id="current-student-badge" style="display:none;">📌 Viewing: <span id="current-student-name"></span></span>
+          <span class="current-student-badge" id="current-student-badge" style="display:none;">Viewing: <span id="current-student-name"></span></span>
         </div>
         <div class="individual-progress" id="individual-progress">
-          <h3>👤 <span id="individual-student-name">Student Progress</span></h3>
+          <h3><span id="individual-student-name">Student Progress</span></h3>
           <div id="dashboard-contact-buttons"></div>
           <div class="charts-grid">
-            <div class="chart-wrapper"><h4>📈 Lesson Completion Progress</h4><canvas id="individual-progress-chart"></canvas></div>
-            <div class="chart-wrapper"><h4>📊 Progress Overview</h4><canvas id="individual-overview-chart"></canvas></div>
+            <div class="chart-wrapper"><h4>Lesson Completion Progress</h4><canvas id="individual-progress-chart"></canvas></div>
+            <div class="chart-wrapper"><h4>Progress Overview</h4><canvas id="individual-overview-chart"></canvas></div>
           </div>
         </div>
         <div class="charts-grid">
-          <div class="chart-wrapper"><h4>📈 Overall Lesson Completion Rates</h4><canvas id="overall-progress-chart"></canvas></div>
-          <div class="chart-wrapper"><h4>📊 Progress Distribution</h4><canvas id="progress-distribution-chart"></canvas></div>
+          <div class="chart-wrapper"><h4>Overall Lesson Completion Rates</h4><canvas id="overall-progress-chart"></canvas></div>
+          <div class="chart-wrapper"><h4>Progress Distribution</h4><canvas id="progress-distribution-chart"></canvas></div>
         </div>
       </section>
-            <section id="data-entry" class="view">
-        <div id="success-message" class="success-message">✅ Data saved successfully!</div>
+
+      <!-- Data Entry View -->
+      <section id="data-entry" class="view">
+        <div id="success-message" class="success-message">Data saved successfully!</div>
         <div class="form-container">
           <form id="data-entry-form" onsubmit="handleFormSubmit(event)">
             <input type="hidden" id="student-id"/>
             <div class="form-section">
-              <h4>👤 Student Information</h4>
+              <h4>Student Information</h4>
               <div class="form-row">
-  <div class="form-group"><label>Full Name *</label><input type="text" id="de-name" required placeholder="Enter student name"/></div>
-                <div class="form-group"><label>Phone Number *</label><input type="tel" id="de-phone" required placeholder="e.g., 0712345678"/></div>
                 <div class="form-group">
-                  <label>Class Number *</label>
-                  <input type="text" id="de-class" required placeholder="Auto-suggested or type custom"/>
-                  <div class="auto-class-hint" id="class-hint">Next available: <strong>Auto-calculating...</strong></div>
+                  <label>Full Name *</label>
+                  <input type="text" id="de-name" required placeholder="Enter full name"/>
+                </div>
+                <div class="form-group">
+                  <label>Phone Number *</label>
+                  <input type="tel" id="de-phone" required placeholder="Enter phone number"/>
                 </div>
               </div>
               <div class="form-row">
-                <div class="form-group"><label>Email</label><input type="email" id="de-email" placeholder="student@email.com"/></div>
-                <div class="form-group"><label>Date Joined</label><input type="date" id="de-joined"/></div>
+                <div class="form-group">
+                  <label>Class Number *</label>
+                  <input type="number" id="de-class" required placeholder="e.g., 696" min="1" max="999" oninput="calculateNextClassNumber()"/>
+                  <div class="auto-class-hint" id="class-hint">Next available: <strong>696</strong> (or type custom)</div>
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" id="de-email" placeholder="Enter email address"/>
+                </div>
               </div>
-              <div id="form-contact-buttons"></div>
+              <div class="form-group">
+                <label>Joined Date</label>
+                <input type="date" id="de-joined"/>
+              </div>
             </div>
             <div class="form-section">
-              <h4>📚 Lesson Completion (Toggle On/Off)</h4>
+              <h4>Lesson Progress</h4>
+              <div id="form-contact-buttons"></div>
               <div class="lessons-grid" id="lessons-grid"></div>
             </div>
-            <div class="toolbar">
-              <button type="submit" class="btn-primary">💾 Save & Clear</button>
-              <button type="button" class="btn-secondary" onclick="resetForm()">🔄 Clear Form</button>
-              <button type="button" class="btn-success" onclick="showView('reports')">📋 View Reports</button>
-            </div>
+            <button type="submit" class="btn-primary">Save Progress</button>
+            <button type="button" class="btn-secondary" onclick="resetForm()" style="margin-left:12px;">Reset</button>
           </form>
         </div>
       </section>
 
+      <!-- Reports View -->
       <section id="reports" class="view">
-  <div class="toolbar">
-    <input type="text" id="search-report" placeholder="🔍 Search by name, class, or phone..." class="search-input" oninput="renderReportsTable()" style="flex:1;min-width:250px;"/>
-    <select id="filter-class" onchange="renderReportsTable()"><option value="">All Classes</option></select>
-    <button class="btn-primary" onclick="showView('data-entry')">➕ Add Student</button>
-    <button class="btn-success" onclick="exportToCSV()">📥 CSV</button>
-    <button class="btn-secondary" onclick="exportToPDF()">📄 PDF</button>
-  </div>
-  
-  <div class="table-wrapper">
-    <table id="reports-table">
-      <thead class="table-header-fixed">
-        <tr id="table-header"></tr>
-      </thead>
-      <tbody class="table-body-scrollable" id="table-body"></tbody>
-    </table>
-  </div>
-  
-  <div class="pagination" id="pagination"></div>
-</section>
+        <div class="toolbar">
+          <input type="text" id="search-report" class="search-input" placeholder="Search students..." oninput="renderReportsTable()"/>
+          <select id="filter-class" class="search-input" onchange="renderReportsTable()" style="min-width:150px;">
+            <option value="">All Classes</option>
+          </select>
+          <button class="btn-success" onclick="exportToCSV()">Export CSV</button>
+          <button class="btn-primary" onclick="exportToPDF()">Generate PDF</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="students-table">
+            <thead class="table-header-fixed" id="table-header">
+              <tr>
+                <th style="text-align:left;min-width:320px;">Student</th>
+                <th>Progress</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table-body-scrollable" id="table-body">
+              <tr><td colspan="3" style="text-align:center;color:#64748b;padding:40px;">Loading data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </section>
 
+      <!-- Users View -->
       <section id="users" class="view">
-        <div class="toolbar"><h3>👥 User Management</h3></div>
-        <div class="user-list">
-          <h4>⏳ Pending Requests</h4>
-          <div id="pending-users-list"><p style="color:#64748b;padding:20px;">Loading...</p></div>
-        </div>
-        <div class="user-list">
-          <h4>✅ Authorized Users</h4>
-          <div id="authorized-users-list"><p style="color:#64748b;padding:20px;">Loading...</p></div>
-        </div>
-        <div class="form-container">
-          <h4>➕ Add New User Directly</h4>
-          <form onsubmit="addNewUser(event)" class="form-row">
-            <input type="email" id="new-user-email" placeholder="Email" required style="flex:1;"/>
-            <input type="password" id="new-user-password" placeholder="Password (min 6)" required minlength="6" style="flex:1;"/>
-            <input type="text" id="new-user-name" placeholder="Full Name" required style="flex:1;"/>
-            <button type="submit" class="btn-primary">Add User</button>
-          </form>
+        <div class="card">
+          <h3>Manage Users</h3>
+          
+          <div class="form-section" style="margin-bottom:24px;">
+            <h4>Add New User</h4>
+            <form id="add-user-form" onsubmit="addNewUser(event)">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Email *</label>
+                  <input type="email" id="new-user-email" required placeholder="user@example.com"/>
+                </div>
+                <div class="form-group">
+                  <label>Password *</label>
+                  <input type="password" id="new-user-password" required minlength="6" placeholder="Min 6 characters"/>
+                </div>
+                <div class="form-group">
+                  <label>Name *</label>
+                  <input type="text" id="new-user-name" required placeholder="Full name"/>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary">Create User</button>
+            </form>
+          </div>
+          
+          <div class="user-list">
+            <h4>Pending Requests</h4>
+            <div id="pending-users-list">
+              <p style="color:#64748b;text-align:center;padding:20px;">Loading...</p>
+            </div>
+          </div>
+          
+          <div class="user-list">
+            <h4>Authorized Users</h4>
+            <div id="authorized-users-list">
+              <p style="color:#64748b;text-align:center;padding:20px;">Loading...</p>
+            </div>
+          </div>
         </div>
       </section>
     </main>
+    
+           <footer class="footer">© 2026 Discipleship Tracker. All rights reserved.</footer>
+  </main>
 
-    <footer class="footer"><p>© 2026 Discipleship Tracker - Smart Edition 🔐</p></footer>
-  </div>
-
+  <!-- Registration Modal -->
   <div id="register-modal" class="modal">
     <div class="modal-content">
       <span class="close-modal" onclick="closeRegisterModal()">&times;</span>
-      <h3 style="margin-bottom:20px;color:#1a202c;">📝 Request Access</h3>
+      <h3 style="margin-bottom:20px;color:#4a5568;">Register New Account</h3>
       <form id="register-form" onsubmit="handleRegister(event)">
-        <div class="form-group"><label>Email *</label><input type="email" id="reg-email" required placeholder="your@email.com"/></div>
-        <div class="form-group"><label>Password * (min 6 characters)</label><input type="password" id="reg-password" required minlength="6" placeholder="Create password"/></div>
-        <div class="form-group"><label>Full Name *</label><input type="text" id="reg-name" required placeholder="Your name"/></div>
-        <div class="form-group"><label>Role/Position *</label><input type="text" id="reg-role" required placeholder="e.g., Pastor, Teacher, Admin"/></div>
-        <button type="submit" class="btn-primary" style="width:100%;">📩 Submit Request</button>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="reg-email" required placeholder="your@email.com"/>
+        </div>
+        <div class="form-group">
+          <label>Password *</label>
+          <input type="password" id="reg-password" required minlength="6" placeholder="Min 6 characters"/>
+        </div>
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="reg-name" required placeholder="Your full name"/>
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <input type="text" id="reg-role" placeholder="e.g., Teacher, Admin"/>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;">Register</button>
       </form>
-      <p style="margin-top:16px;color:#64748b;font-size:13px;">⚠️ Your request will be reviewed by an admin before access is granted.</p>
     </div>
   </div>
 
   <script>
+    // 🔥 OLD FIREBASE (Discipleship Tracker)
     const firebaseConfig = {
       apiKey: "AIzaSyCdSvUk6qpC857ZJfaDbniDlOKvWXPYYXY",
       authDomain: "discipleship-dashboard-4d713.firebaseapp.com",
@@ -378,7 +346,7 @@ tbody tr:hover {
       messagingSenderId: "27738663604",
       appId: "1:27738663604:web:bf1898247e0dd5a37805e1"
     };
-
+    
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const auth = firebase.auth();
@@ -398,13 +366,13 @@ tbody tr:hover {
     };
 
     function checkAdminAccess() {
-      if (!app.isAdmin) { alert('🔐 Admin access required!'); return false; }
+      if (!app.isAdmin) { alert('Admin access required!'); return false; }
       return true;
     }
 
     auth.onAuthStateChanged(function(user) {
       app.currentUser = user;
-      console.log('🔐 Auth State:', user ? user.email : 'Logged out');
+      console.log('Auth State:', user ? user.email : 'Logged out');
       
       if (user) {
         document.getElementById('user-display').textContent = '👤 ' + (user.email || 'User');
@@ -415,12 +383,12 @@ tbody tr:hover {
         
         database.ref('authorized_users/' + user.uid).once('value').then(snapshot => {
           const userData = snapshot.val();
-          console.log('📋 User Data:', userData);
+          console.log('User Data:', userData);
           
           if (userData) {
             app.isAdmin = userData.role === 'Admin';
           } else {
-            console.log('⚠️ Auto-making admin');
+            console.log('Auto-making admin');
             app.isAdmin = true;
             database.ref('authorized_users/' + user.uid).set({
               email: user.email,
@@ -431,17 +399,17 @@ tbody tr:hover {
             });
           }
           
-          console.log('✅ Admin:', app.isAdmin);
+          console.log('Admin:', app.isAdmin);
           document.getElementById('btn-users').disabled = !app.isAdmin;
           calculateNextClassNumber();
           loadUserData();
         }).catch(err => {
-          console.error('❌ Error:', err);
+          console.error('Error:', err);
           app.isAdmin = true;
           document.getElementById('btn-users').disabled = false;
         });
       } else {
-        document.getElementById('user-display').textContent = '🔐 Guest';
+        document.getElementById('user-display').textContent = 'Guest';
         document.getElementById('auth-btn').textContent = 'Login';
         document.getElementById('register-btn').style.display = 'inline-block';
         document.getElementById('auth-warning').style.display = 'block';
@@ -451,8 +419,9 @@ tbody tr:hover {
         updateDashboard();
       }
     });
+
     function loadUserData() {
-      console.log('📊 Loading data...');
+      console.log('Loading data...');
       database.ref('students').on('value', snapshot => {
         app.students = snapshot.val() || {};
         calculateNextClassNumber();
@@ -479,7 +448,7 @@ tbody tr:hover {
       }
       const hintEl = document.getElementById('class-hint');
       if (hintEl) {
-        hintEl.innerHTML = `Next available: <strong>${app.nextClassNumber}</strong> (or type custom)`;
+        hintEl.innerHTML = 'Next available: <strong>' + app.nextClassNumber + '</strong> (or type custom)';
       }
       const classInput = document.getElementById('de-class');
       if (classInput && !classInput.value) {
@@ -488,10 +457,10 @@ tbody tr:hover {
     }
 
     window.showView = function(viewName) {
-      console.log('📍 View:', viewName, '| Admin:', app.isAdmin);
+      console.log('View:', viewName, '| Admin:', app.isAdmin);
       
       if (viewName === 'users' && !app.isAdmin) {
-        alert('🔐 Admin access required!');
+        alert('Admin access required!');
         return;
       }
       
@@ -506,7 +475,7 @@ tbody tr:hover {
       if (viewName === 'dashboard') { updateDashboard(); updateStudentSelector(); }
       if (viewName === 'users') { 
         if (checkAdminAccess()) {
-          console.log('👥 Loading users...'); 
+          console.log('Loading users...'); 
           loadUserManagement(); 
         }
       }
@@ -517,14 +486,14 @@ tbody tr:hover {
 
     window.toggleAuth = function() {
       if (app.currentUser) {
-        auth.signOut().then(() => alert('✅ Logged out'));
+        auth.signOut().then(() => alert('Logged out'));
       } else {
         const email = prompt('Email:');
         if (email) {
           const password = prompt('Password:');
           auth.signInWithEmailAndPassword(email, password)
-            .then(() => alert('✅ Login successful!'))
-            .catch(err => alert('❌ ' + err.message));
+            .then(() => alert('Login successful!'))
+            .catch(err => alert('Error: ' + err.message));
         }
       }
     };
@@ -541,29 +510,29 @@ tbody tr:hover {
       
       auth.createUserWithEmailAndPassword(email, password)
         .then(uc => database.ref('pending_users/' + uc.user.uid).set({ email, name, role, requestedAt: firebase.database.ServerValue.TIMESTAMP, status: 'pending' }))
-        .then(() => { alert('✅ Request submitted!'); closeRegisterModal(); auth.signOut(); })
-        .catch(err => alert('❌ ' + err.message));
+        .then(() => { alert('Request submitted!'); closeRegisterModal(); auth.signOut(); })
+        .catch(err => alert('Error: ' + err.message));
     };
 
     function loadUserManagement() {
-      console.log('👥 Loading user management...');
+      console.log('Loading user management...');
       const pendingList = document.getElementById('pending-users-list');
       const authorizedList = document.getElementById('authorized-users-list');
       
       database.ref('pending_users').on('value', snapshot => {
         const users = snapshot.val() || {};
-        console.log('⏳ Pending:', users);
+        console.log('Pending:', users);
         pendingList.innerHTML = Object.keys(users).length === 0 ? 
           '<p style="color:#64748b;padding:20px;text-align:center;">No pending requests</p>' :
-          Object.entries(users).map(([uid, u]) => `<div class="user-item pending"><div><strong>${u.name}</strong><br><small>${u.email}</small><br><small>${u.role}</small></div><div class="user-actions"><button class="btn-success btn-sm" onclick="approveUser('${uid}','${u.email}')">✅</button><button class="btn-danger btn-sm" onclick="rejectUser('${uid}')">❌</button></div></div>`).join('');
+          Object.entries(users).map(([uid, u]) => '<div class="user-item pending"><div><strong>' + u.name + '</strong><br><small>' + u.email + '</small><br><small>' + u.role + '</small></div><div class="user-actions"><button class="btn-success btn-sm" onclick="approveUser(\'' + uid + '\',\'' + u.email + '\')">Approve</button><button class="btn-danger btn-sm" onclick="rejectUser(\'' + uid + '\')">Reject</button></div></div>').join('');
       });
 
       database.ref('authorized_users').on('value', snapshot => {
         const users = snapshot.val() || {};
-        console.log('✅ Authorized:', users);
+        console.log('Authorized:', users);
         authorizedList.innerHTML = Object.keys(users).length === 0 ?
           '<p style="color:#64748b;padding:20px;text-align:center;">No authorized users</p>' :
-          Object.entries(users).map(([uid, u]) => `<div class="user-item approved"><div><strong>${u.name}</strong> ${u.role==='Admin'?'<span style="background:#667eea;color:white;padding:2px 8px;border-radius:4px;font-size:11px;">Admin</span>':''}<br><small>${u.email}</small><br><small>${u.role}</small></div><div class="user-actions">${uid!==app.currentUser.uid?`<button class="btn-danger btn-sm" onclick="removeUser('${uid}','${u.email}')">❌</button>`:'<small>(You)</small>'}</div></div>`).join('');
+          Object.entries(users).map(([uid, u]) => '<div class="user-item approved"><div><strong>' + u.name + '</strong> ' + (u.role==='Admin'?'<span style="background:#667eea;color:white;padding:2px 8px;border-radius:4px;font-size:11px;">Admin</span>':'') + '<br><small>' + u.email + '</small><br><small>' + u.role + '</small></div><div class="user-actions">' + (uid!==app.currentUser.uid?'<button class="btn-danger btn-sm" onclick="removeUser(\'' + uid + '\',\'' + u.email + '\')">Remove</button>':'<small>(You)</small>') + '</div></div>').join('');
       });
     }
 
@@ -577,25 +546,25 @@ tbody tr:hover {
           status: 'approved'
         })
       ).then(() => database.ref('pending_users/' + uid).remove())
-        .then(() => alert('✅ Approved!'));
+        .then(() => alert('Approved!'));
     };
 
     window.rejectUser = function(uid) {
       if (!checkAdminAccess()) return;
       if (!confirm('Reject?')) return;
-      database.ref('pending_users/' + uid).remove().then(() => alert('❌ Rejected'));
+      database.ref('pending_users/' + uid).remove().then(() => alert('Rejected'));
     };
 
     window.removeUser = function(uid, email) {
       if (!checkAdminAccess()) return;
-      if (uid === app.currentUser.uid) { alert('⚠️ You cannot remove yourself!'); return; }
+      if (uid === app.currentUser.uid) { alert('You cannot remove yourself!'); return; }
       database.ref('authorized_users/' + uid).once('value').then(snapshot => {
         const userData = snapshot.val();
         if (userData && userData.role === 'Admin') {
-          if (!confirm('⚠️ You are about to remove another ADMIN. Continue?')) return;
+          if (!confirm('You are about to remove another ADMIN. Continue?')) return;
         }
         if (!confirm('Remove ' + email + '?')) return;
-        database.ref('authorized_users/' + uid).remove().then(() => alert('✅ Removed'));
+        database.ref('authorized_users/' + uid).remove().then(() => alert('Removed'));
       });
     };
 
@@ -607,13 +576,14 @@ tbody tr:hover {
       const name = document.getElementById('new-user-name').value.trim();
       auth.createUserWithEmailAndPassword(email, password)
         .then(uc => database.ref('authorized_users/' + uc.user.uid).set({ email, name, role: 'User', createdAt: firebase.database.ServerValue.TIMESTAMP, status: 'approved', createdBy: app.currentUser.uid }))
-        .then(() => { alert('✅ User created!'); e.target.reset(); })
-        .catch(err => alert('❌ ' + err.message));
+        .then(() => { alert('User created!'); e.target.reset(); })
+        .catch(err => alert('Error: ' + err.message));
     };
-        function populateLessonsGrid() {
+
+    function populateLessonsGrid() {
       const grid = document.getElementById('lessons-grid');
       if (!grid) return;
-      grid.innerHTML = app.lessons.map((l, i) => `<div class="lesson-item" data-lesson="${l}"><label>${l}</label><span class="toggle-switch" data-lesson="${l}" onclick="toggleLesson(this)"></span></div>`).join('');
+      grid.innerHTML = app.lessons.map((l, i) => '<div class="lesson-item" data-lesson="' + l + '"><label>' + l + '</label><span class="toggle-switch" data-lesson="' + l + '" onclick="toggleLesson(this)"></span></div>').join('');
     }
 
     window.toggleLesson = function(el) {
@@ -630,7 +600,7 @@ tbody tr:hover {
       const email = document.getElementById('de-email').value.trim();
       const joined = document.getElementById('de-joined').value || new Date().toISOString();
       
-      if (!name || !phone || !classNum) { alert('⚠️ Fill Name, Phone, Class'); return; }
+      if (!name || !phone || !classNum) { alert('Fill Name, Phone, Class'); return; }
       
       const student = { name, phone, class: classNum, email, group: classNum, joined, updatedAt: Date.now() };
       database.ref('students/' + studentId).set(student).then(() => {
@@ -659,24 +629,26 @@ tbody tr:hover {
       if (!contactDiv || !phone) return;
       const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
       let whatsappPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.substring(1) : cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
-      contactDiv.innerHTML = `<div style="margin:16px 0;padding:16px;background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:12px;border:2px solid #e2e8f0;"><strong style="color:#4a5568;display:block;margin-bottom:12px;font-size:14px;"><i class="fas fa-mobile-alt"></i> Quick Contact:</strong><div class="contact-buttons"><a href="tel:${phone}" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a><a href="sms:${phone}" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/${whatsappPhone}" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div>`;
+      contactDiv.innerHTML = '<div style="margin:16px 0;padding:16px;background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:12px;border:2px solid #e2e8f0;"><strong style="color:#4a5568;display:block;margin-bottom:12px;font-size:14px;"><i class="fas fa-mobile-alt"></i> Quick Contact:</strong><div class="contact-buttons"><a href="tel:' + phone + '" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a><a href="sms:' + phone + '" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/' + whatsappPhone + '" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div>';
     }
 
+    // ✅ IMPROVED: Search by Name, Class Number, AND Phone Number
     window.searchStudentsDashboard = function() {
-      const searchTerm = document.getElementById('dashboard-search-input').value.toLowerCase();
+      const searchTerm = document.getElementById('dashboard-search-input').value.trim().toLowerCase();
       const selector = document.getElementById('dashboard-student-selector');
       
       if (!selector) return;
       
       const filtered = Object.entries(app.students).filter(([id, s]) => {
-        return !searchTerm || 
-               s.name.toLowerCase().includes(searchTerm) || 
-               s.class.toLowerCase().includes(searchTerm) || 
-               s.phone.includes(searchTerm);
+        if (!searchTerm) return true;
+        const nameMatch = s.name && s.name.toLowerCase().includes(searchTerm);
+        const classMatch = s.class && s.class.toString().toLowerCase().includes(searchTerm);
+        const phoneMatch = s.phone && s.phone.toString().includes(searchTerm);
+        return nameMatch || classMatch || phoneMatch;
       });
       
       selector.innerHTML = '<option value="">-- Select a Student --</option>' + 
-        filtered.map(([id, s]) => `<option value="${id}">${s.name} (Class ${s.class}) - ${s.phone}</option>`).join('');
+        filtered.map(([id, s]) => '<option value="' + id + '">' + s.name + ' (Class ' + s.class + ') - ' + s.phone + '</option>').join('');
       
       if (filtered.length > 0) {
         selector.value = filtered[0][0];
@@ -692,11 +664,11 @@ tbody tr:hover {
       if (!selector) return;
       const sorted = Object.entries(app.students).sort((a, b) => (b[1].updatedAt || 0) - (a[1].updatedAt || 0));
       selector.innerHTML = '<option value="">-- Select a Student --</option>' + 
-        sorted.map(([id, s]) => `<option value="${id}">${s.name} (Class ${s.class}) - ${s.phone}</option>`).join('');
+        sorted.map(([id, s]) => '<option value="' + id + '">' + s.name + ' (Class ' + s.class + ') - ' + s.phone + '</option>').join('');
       if (sorted.length > 0) { selector.value = sorted[0][0]; showIndividualProgress(); }
     }
-
-    window.showIndividualProgress = function() {
+    
+        window.showIndividualProgress = function() {
       const studentId = document.getElementById('dashboard-student-selector').value;
       const container = document.getElementById('individual-progress');
       const badge = document.getElementById('current-student-badge');
@@ -709,7 +681,7 @@ tbody tr:hover {
         return;
       }
       
-       container.classList.add('show');
+      container.classList.add('show');
       badge.style.display = 'inline-block';
       const student = app.students[studentId];
       const progressData = app.progress[studentId] || {};
@@ -720,7 +692,7 @@ tbody tr:hover {
       const cleanPhone = student.phone.replace(/[\s\-\(\)]/g, '');
       const whatsappPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.substring(1) : cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
       
-      contactDiv.innerHTML = `<div style="margin:16px 0;padding:16px;background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:12px;border:2px solid #e2e8f0;"><strong style="color:#4a5568;display:block;margin-bottom:12px;font-size:14px;"><i class="fas fa-mobile-alt"></i> Quick Contact:</strong><div class="contact-buttons"><a href="tel:${student.phone}" class="btn-contact btn-call"><i class="fas fa-phone"></i> Call</a><a href="sms:${student.phone}" class="btn-contact btn-sms"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/${whatsappPhone}" target="_blank" class="btn-contact btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div>`;
+      contactDiv.innerHTML = '<div style="margin:16px 0;padding:16px;background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:12px;border:2px solid #e2e8f0;"><strong style="color:#4a5568;display:block;margin-bottom:12px;font-size:14px;"><i class="fas fa-mobile-alt"></i> Quick Contact:</strong><div class="contact-buttons"><a href="tel:' + student.phone + '" class="btn-contact btn-call"><i class="fas fa-phone"></i> Call</a><a href="sms:' + student.phone + '" class="btn-contact btn-sms"><i class="fas fa-comment"></i> SMS</a><a href="https://wa.me/' + whatsappPhone + '" target="_blank" class="btn-contact btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a></div></div>';
       
       let completedCount = 0;
       const lessonData = [], lessonLabels = [];
@@ -747,26 +719,32 @@ tbody tr:hover {
       });
     };
 
+    // ✅ IMPROVED: Search by Name, Class Number, AND Phone Number
     window.renderReportsTable = function() {
       const header = document.getElementById('table-header');
       const body = document.getElementById('table-body');
       if (!header || !body) return;
       
-      const searchTerm = (document.getElementById('search-report').value || '').toLowerCase();
+      const searchTerm = (document.getElementById('search-report').value || '').trim().toLowerCase();
       const classFilter = document.getElementById('filter-class').value || '';
       
       app.filteredStudents = Object.keys(app.students).filter(id => {
         const s = app.students[id];
-        const matchesSearch = !searchTerm || 
-          s.name.toLowerCase().includes(searchTerm) || 
-          s.class.toLowerCase().includes(searchTerm) || 
-          s.phone.includes(searchTerm);
-        const matchesClass = !classFilter || s.class === classFilter;
-        return matchesSearch && matchesClass;
+        
+        // Search through Name, Class Number, AND Phone Number
+        const nameMatch = !searchTerm || (s.name && s.name.toLowerCase().includes(searchTerm));
+        const classMatch = !searchTerm || (s.class && s.class.toString().toLowerCase().includes(searchTerm));
+        const phoneMatch = !searchTerm || (s.phone && s.phone.toString().includes(searchTerm));
+        const matchesSearch = nameMatch || classMatch || phoneMatch;
+        
+        // Filter by class dropdown
+        const matchesClassFilter = !classFilter || s.class === classFilter;
+        
+        return matchesSearch && matchesClassFilter;
       });
       
       header.innerHTML = '<th style="text-align:left;min-width:320px;">Student</th>' + 
-        app.lessons.map(l => `<th style="font-size:11px;writing-mode:vertical-lr;transform:rotate(180deg);height:100px;">${l}</th>`).join('') + 
+        app.lessons.map(l => '<th style="font-size:11px;writing-mode:vertical-lr;transform:rotate(180deg);height:100px;">' + l + '</th>').join('') + 
         '<th>Progress</th><th>Actions</th>';
       
       const totalPages = Math.ceil(app.filteredStudents.length / app.recordsPerPage);
@@ -780,20 +758,20 @@ tbody tr:hover {
         const cleanPhone = s.phone.replace(/[\s\-\(\)]/g, '');
         const waPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.substring(1) : cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
         
-        return `<tr onclick="if(!event.target.classList.contains('btn-danger')&&!event.target.closest('.btn-contact'))loadStudentForEdit('${id}')">
-          <td><div class="student-info">
-            <span class="student-name">${s.name}</span>
-            <span class="student-phone"><i class="fas fa-phone"></i> ${s.phone}</span>
-            <span class="student-class"><i class="fas fa-graduation-cap"></i> Class ${s.class}</span>
-            <div class="contact-buttons">
-              <a href="tel:${s.phone}" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a>
-              <a href="sms:${s.phone}" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a>
-              <a href="https://wa.me/${waPhone}" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            </div>
-          </div></td>` +
-          app.lessons.map(l => `<td><span class="status-badge ${(p[l]&&p[l].completed)?'status-yes':'status-no'}">${(p[l]&&p[l].completed)?'Yes':'No'}</span></td>`).join('') +
-          `<td><small style="font-weight:700;color:#667eea;">${percent}% (${completedCount}/${app.lessons.length})</small></td>` +
-          `<td><button class="btn-danger btn-sm" onclick="deleteStudent('${id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
+        return '<tr onclick="if(!event.target.classList.contains(\'btn-danger\')&&!event.target.closest(\'.btn-contact\'))loadStudentForEdit(\'' + id + '\')">' +
+          '<td><div class="student-info">' +
+            '<span class="student-name">' + s.name + '</span>' +
+            '<span class="student-phone"><i class="fas fa-phone"></i> ' + s.phone + '</span>' +
+            '<span class="student-class"><i class="fas fa-graduation-cap"></i> Class ' + s.class + '</span>' +
+            '<div class="contact-buttons">' +
+              '<a href="tel:' + s.phone + '" class="btn-contact btn-call" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> Call</a>' +
+              '<a href="sms:' + s.phone + '" class="btn-contact btn-sms" onclick="event.stopPropagation()"><i class="fas fa-comment"></i> SMS</a>' +
+              '<a href="https://wa.me/' + waPhone + '" target="_blank" class="btn-contact btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i> WhatsApp</a>' +
+            '</div>' +
+          '</div></td>' +
+          app.lessons.map(l => '<td><span class="status-badge ' + ((p[l]&&p[l].completed)?'status-yes':'status-no') + '">' + ((p[l]&&p[l].completed)?'Yes':'No') + '</span></td>').join('') +
+          '<td><small style="font-weight:700;color:#667eea;">' + percent + '% (' + completedCount + '/' + app.lessons.length + ')</small></td>' +
+          '<td><button class="btn-danger btn-sm" onclick="deleteStudent(\'' + id + '\')"><i class="fas fa-trash"></i> Delete</button></td></tr>';
       }).join('');
       
       if (app.filteredStudents.length === 0) 
@@ -805,11 +783,11 @@ tbody tr:hover {
       const p = document.getElementById('pagination');
       if (!p) return;
       p.innerHTML = totalPages <= 1 ? '' : 
-        `<button onclick="changePage(1)" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-double-left"></i></button>` +
-        `<button onclick="changePage(${app.currentPage-1})" ${app.currentPage===1?'disabled':''}><i class="fas fa-angle-left"></i></button>` +
-        `<span class="pagination-info">${app.currentPage}/${totalPages}</span>` +
-        `<button onclick="changePage(${app.currentPage+1})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-right"></i></button>` +
-        `<button onclick="changePage(${totalPages})" ${app.currentPage===totalPages?'disabled':''}><i class="fas fa-angle-double-right"></i></button>`;
+        '<button onclick="changePage(1)" ' + (app.currentPage===1?'disabled':'') + '><i class="fas fa-angle-double-left"></i></button>' +
+        '<button onclick="changePage(' + (app.currentPage-1) + ')" ' + (app.currentPage===1?'disabled':'') + '><i class="fas fa-angle-left"></i></button>' +
+        '<span class="pagination-info">' + app.currentPage + '/' + totalPages + '</span>' +
+        '<button onclick="changePage(' + (app.currentPage+1) + ')" ' + (app.currentPage===totalPages?'disabled':'') + '><i class="fas fa-angle-right"></i></button>' +
+        '<button onclick="changePage(' + totalPages + ')" ' + (app.currentPage===totalPages?'disabled':'') + '><i class="fas fa-angle-double-right"></i></button>';
     }
 
     window.changePage = function(page) { app.currentPage = page; renderReportsTable(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -826,7 +804,7 @@ tbody tr:hover {
       document.getElementById('de-joined').value = s.joined ? s.joined.split('T')[0] : '';
       if (s.phone) addContactButtonsToForm(s.phone);
       app.lessons.forEach(l => {
-        const toggle = document.querySelector(`.toggle-switch[data-lesson="${l}"]`);
+        const toggle = document.querySelector('.toggle-switch[data-lesson="' + l + '"]');
         if (toggle) { toggle.classList.toggle('active', p[l] && p[l].completed); app.lessonStates[l] = p[l] && p[l].completed; }
       });
       showView('data-entry');
@@ -835,7 +813,7 @@ tbody tr:hover {
     window.deleteStudent = function(id) {
       if (!confirm('Delete?')) return;
       database.ref('students/' + id).remove().then(() => database.ref('progress/' + id).remove()).then(() => {
-        alert('✅ Deleted');
+        alert('Deleted');
         calculateNextClassNumber();
       });
     };
@@ -844,7 +822,7 @@ tbody tr:hover {
       const f = document.getElementById('filter-class');
       if (!f) return;
       const classes = [...new Set(Object.values(app.students).map(s => s.class).filter(c => c))].sort((a, b) => parseInt(a) - parseInt(b));
-      f.innerHTML = '<option value="">All Classes</option>' + classes.map(c => `<option value="${c}">Class ${c}</option>`).join('');
+      f.innerHTML = '<option value="">All Classes</option>' + classes.map(c => '<option value="' + c + '">Class ' + c + '</option>').join('');
     }
 
     function updateDashboard() {
@@ -888,7 +866,7 @@ tbody tr:hover {
       let csv = 'Class,Name,Phone,Email,' + app.lessons.join(',') + ',Progress\n';
       Object.keys(app.students).forEach(id => {
         const s = app.students[id], p = app.progress[id] || {};
-        let row = `"${s.class}","${s.name}","${s.phone}","${s.email||''}"`;
+        let row = '"' + s.class + '","' + s.name + '","' + s.phone + '","' + (s.email||'') + '"';
         app.lessons.forEach(l => { row += ',' + ((p[l]&&p[l].completed)?'Yes':'No'); });
         const c = app.lessons.filter(l => p[l] && p[l].completed).length;
         csv += row + ',' + Math.round((c/app.lessons.length)*100) + '%\n';
@@ -898,10 +876,10 @@ tbody tr:hover {
       a.href = URL.createObjectURL(blob);
       a.download = 'discipleship_' + new Date().toISOString().split('T')[0] + '.csv';
       a.click();
-      alert('✅ CSV exported');
+      alert('CSV exported');
     };
     
-        window.exportToPDF = function() {
+    window.exportToPDF = function() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('l', 'mm', 'a4');
       
@@ -969,13 +947,13 @@ tbody tr:hover {
       }
       
       doc.save('Discipleship_Progress_Report_' + new Date().toISOString().split('T')[0] + '.pdf');
-      alert('✅ PDF exported successfully!');
+      alert('PDF exported successfully!');
     };
 
     window.addEventListener('DOMContentLoaded', function() {
       populateLessonsGrid();
       document.getElementById('de-joined').value = new Date().toISOString().split('T')[0];
-      console.log('✅ App Ready - Fixed Headers Enabled! 🔐');
+      console.log('App Ready - Search enabled for Name, Class, and Phone!');
     });
   </script>
 </body>
